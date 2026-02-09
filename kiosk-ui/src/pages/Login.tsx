@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom"
 import PageWrapper from "../components/PageWrapper"
 
+import React from "react";
+
 export default function Login() {
   const navigate = useNavigate()
 

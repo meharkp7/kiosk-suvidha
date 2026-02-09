@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import PageWrapper from "../components/PageWrapper"
 
+import React from "react";
+
 export default function LanguageSelect() {
   const navigate = useNavigate()
   const { t, i18n } = useTranslation()
