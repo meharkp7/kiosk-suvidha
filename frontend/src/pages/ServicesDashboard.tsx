@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import PageWrapper from "../components/PageWrapper"
+import ScreenLayout from "../components/ScreenLayout"
 
 const ICONS: Record<string, string> = {
   "Electricity Department": "⚡",
@@ -94,49 +95,54 @@ export default function ServicesDashboard() {
 
   return (
     <PageWrapper>
-      <div className="flex h-full">
-        {/* LEFT ICON PANEL */}
-        <div className="w-20 bg-slate-50 border-r flex flex-col items-center py-6 gap-4">
-          {departments.map((dept) => (
-            <button
-              key={dept}
-              title={dept}
-              onClick={() => setActiveDept(dept)}
-              className={`w-12 h-12 rounded-full text-xl flex items-center justify-center
-                ${
-                  activeDept === dept
-                    ? "bg-blue-800 text-white"
-                    : "bg-white border"
-                }`}
-            >
-              {ICONS[dept]}
-            </button>
-          ))}
-        </div>
-
-        {/* MAIN CONTENT */}
-        <div className="flex-1 p-8 overflow-y-auto">
-          <h2 className="text-2xl font-semibold mb-6">
-            {activeDept}
-          </h2>
-
-          <div className="grid grid-cols-2 gap-4">
-            {SERVICES[activeDept].map((service) => (
+      <ScreenLayout
+        title="Available Services"
+        subtitle="Choose a department and service"
+      >
+        <div className="flex h-full">
+          {/* LEFT ICON PANEL */}
+          <div className="w-20 bg-slate-50 border-r flex flex-col items-center py-6 gap-4">
+            {departments.map((dept) => (
               <button
-                key={service}
-                onClick={() =>
-                  navigate("/service-dashboard", {
-                    state: { department: activeDept, service },
-                  })
-                }
-                className="border rounded-lg p-4 text-left hover:bg-slate-50"
+                key={dept}
+                title={dept}
+                onClick={() => setActiveDept(dept)}
+                className={`w-12 h-12 rounded-full text-xl flex items-center justify-center
+                  ${
+                    activeDept === dept
+                      ? "bg-blue-800 text-white"
+                      : "bg-white border"
+                  }`}
               >
-                {service}
+                {ICONS[dept]}
               </button>
             ))}
           </div>
+
+          {/* MAIN CONTENT */}
+          <div className="flex-1 p-8 overflow-y-auto">
+            <h2 className="text-2xl font-semibold mb-6">
+              {activeDept}
+            </h2>
+
+            <div className="grid grid-cols-2 gap-4">
+              {SERVICES[activeDept].map((service) => (
+                <button
+                  key={service}
+                  onClick={() =>
+                    navigate("/service-dashboard", {
+                      state: { department: activeDept, service },
+                    })
+                  }
+                  className="border rounded-lg p-4 text-left hover:bg-slate-50"
+                >
+                  {service}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      </ScreenLayout>
     </PageWrapper>
   )
 }
