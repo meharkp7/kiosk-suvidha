@@ -32,18 +32,16 @@ export default function Dashboard() {
         {/* FULL HEIGHT COLUMN */}
         <div className="flex flex-col h-full">
           {/* SCROLLABLE ACCOUNTS LIST */}
-          <div className="flex-1 overflow-y-auto space-y-3 pr-2 mb-6">
+          <div className="flex-1 overflow-y-auto space-y-3 pr-1 sm:pr-2 mb-4">
             {accounts.map((acc) => (
               <div
                 key={acc.id}
                 onClick={() => toggle(acc.id)}
-                className={`border rounded-lg p-4 flex items-center gap-4 cursor-pointer transition
-                  ${
-                    selected.includes(acc.id)
-                      ? "bg-blue-50 border-blue-800"
-                      : "hover:bg-slate-50"
-                  }
-                `}
+                className={`border rounded-lg p-3 sm:p-4 flex items-start gap-3 sm:gap-4 cursor-pointer ${
+                  selected.includes(acc.id)
+                    ? "bg-blue-50 border-blue-800"
+                    : "hover:bg-slate-50"
+                }`}
               >
                 {/* Selection Circle */}
                 <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0">
@@ -54,7 +52,7 @@ export default function Dashboard() {
 
                 {/* Account Info */}
                 <div>
-                  <p className="font-medium">{acc.dept}</p>
+                  <p className="font-medium text-sm sm:text-base">{acc.dept}</p>
                   <p className="text-sm text-gray-500">
                     Account ID: {acc.accountNo}
                   </p>

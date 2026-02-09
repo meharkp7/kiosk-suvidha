@@ -10,16 +10,18 @@ export default function PageWrapper({
       <Header />
 
       {/* FIXED KIOSK VIEWPORT */}
-      <main className="flex-1 flex justify-center items-start pt-10">
+      <main className="flex-1 flex justify-center items-start pt-6 px-3 sm:px-6">
         <div
           className="
-            w-[500px]
-            h-[700px]
+            w-full
+            max-w-[500px]
+            h-auto
+            sm:h-[750px]
             bg-white
             border
             rounded-lg
-            px-10
-            py-8
+            px-4 sm:px-8
+            py-6
             overflow-hidden
           "
         >
