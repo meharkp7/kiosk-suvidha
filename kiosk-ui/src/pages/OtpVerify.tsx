@@ -6,18 +6,18 @@ export default function OtpVerify() {
 
   return (
     <PageWrapper>
-      <h2 className="text-2xl font-semibold text-center mb-4">
+      <h2 className="text-2xl font-semibold mb-2">
         OTP Verification
       </h2>
 
-      <p className="text-center text-gray-500 mb-8">
+      <p className="text-gray-500 mb-8">
         Enter the OTP sent to your mobile number
       </p>
 
       <input
         type="text"
         placeholder="Enter 6-digit OTP"
-        className="w-full border rounded-lg py-4 px-4 text-lg mb-8 text-center"
+        className="w-full border rounded-lg p-4 text-lg text-center mb-8"
       />
 
       <button

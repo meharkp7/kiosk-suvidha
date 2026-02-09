@@ -10,10 +10,10 @@ export default function PayBill() {
         Bill Details
       </h2>
 
-      <div className="border rounded-lg p-5 mb-8">
+      <div className="border rounded-lg p-6 mb-8">
         <p className="mb-2">Service: Electricity</p>
-        <p className="mb-2">Bill Month: January 2026</p>
-        <p className="font-semibold text-lg">
+        <p className="mb-2">Bill Month: January</p>
+        <p className="text-lg font-semibold">
           Amount: ₹1,240
         </p>
       </div>

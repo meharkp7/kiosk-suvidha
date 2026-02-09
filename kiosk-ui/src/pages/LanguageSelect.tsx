@@ -8,25 +8,25 @@ export default function LanguageSelect() {
 
   return (
     <PageWrapper>
-      <h2 className="text-3xl font-semibold text-center mb-3">
+      <h2 className="text-2xl font-semibold mb-2">
         {t("welcome")}
       </h2>
 
-      <p className="text-center text-gray-500 mb-10">
-        Please select your preferred language
+      <p className="text-gray-500 mb-8">
+        Select your preferred language
       </p>
 
       <div className="grid grid-cols-2 gap-6 mb-10">
         <button
           onClick={() => i18n.changeLanguage("en")}
-          className="border rounded-lg py-6 text-xl hover:border-blue-800 hover:bg-blue-50"
+          className="border rounded-lg py-6 text-lg"
         >
           English
         </button>
 
         <button
           onClick={() => i18n.changeLanguage("hi")}
-          className="border rounded-lg py-6 text-xl hover:border-blue-800 hover:bg-blue-50"
+          className="border rounded-lg py-6 text-lg"
         >
           हिन्दी
         </button>
@@ -34,9 +34,9 @@ export default function LanguageSelect() {
 
       <button
         onClick={() => navigate("/login")}
-        className="w-full bg-blue-800 text-white py-4 rounded-lg text-xl hover:bg-blue-900"
+        className="w-full bg-blue-800 text-white py-4 rounded-lg text-lg"
       >
-        {t("continue")}
+        Continue
       </button>
     </PageWrapper>
   )
