@@ -101,7 +101,7 @@ export default function ServicesDashboard() {
       >
         <div className="flex h-full">
           {/* LEFT ICON PANEL */}
-          <div className="w-14 sm:w-16 border-r flex flex-col items-center gap-3 py-3">
+          <div className="w-20 bg-slate-50 border-r flex flex-col items-center py-6 gap-4">
             {departments.map((dept) => (
               <button
                 key={dept}
@@ -125,7 +125,7 @@ export default function ServicesDashboard() {
               {activeDept}
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 gap-4">
               {SERVICES[activeDept].map((service) => (
                 <button
                   key={service}
@@ -134,7 +134,7 @@ export default function ServicesDashboard() {
                       state: { department: activeDept, service },
                     })
                   }
-                  className="border rounded-lg p-3 sm:p-4 text-left text-sm sm:text-base"
+                  className="border rounded-lg p-4 text-left hover:bg-slate-50"
                 >
                   {service}
                 </button>

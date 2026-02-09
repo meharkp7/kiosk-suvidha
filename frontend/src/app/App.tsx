@@ -10,6 +10,7 @@ import PaymentSuccess from "../pages/PaymentSuccess"
 import RaiseComplaint from "../pages/RaiseComplaint"
 import ServicesDashboard from "../pages/ServicesDashboard"
 import ServiceDashboard from "../pages/ServiceDashboard"
+import ProtectedRoute from "../components/ProtectedRoute";
 
 export default function App() {
   return (
@@ -18,7 +19,14 @@ export default function App() {
         <Route path="/" element={<LanguageSelect />} />
         <Route path="/login" element={<Login />} />
         <Route path="/otp" element={<OtpVerify />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/services" element={<ServiceSelect />} />
         <Route path="/pay-bill" element={<PayBill />} />
         <Route path="/success" element={<PaymentSuccess />} />
