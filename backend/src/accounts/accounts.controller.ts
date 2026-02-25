@@ -1,14 +1,14 @@
-import { Controller, Get, Req, UseGuards } from "@nestjs/common"
-import { AccountsService } from "./accounts.service"
-import { JwtGuard } from "../common/guards/jwt.guard"
+import { Controller, Get, UseGuards, Req } from '@nestjs/common'
+import { AccountsService } from './accounts.service'
+import { AuthGuard } from '@nestjs/passport'
 
-@Controller("accounts")
+@Controller('accounts')
 export class AccountsController {
-  constructor(private accountsService: AccountsService) {}
+  constructor(private readonly service: AccountsService) {}
 
-  @UseGuards(JwtGuard)
-  @Get()
-  getAccounts(@Req() req: any) {
-    return this.accountsService.getAccounts(req.user.phone)
+  @UseGuards(AuthGuard('jwt'))
+  @Get('me')
+  getMyAccounts(@Req() req: any) {
+    return this.service.getLinkedAccounts(req.user.phoneNumber)
   }
 }

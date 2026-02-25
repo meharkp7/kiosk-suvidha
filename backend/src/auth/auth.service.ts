@@ -18,11 +18,11 @@ export class AuthService {
       return null
     }
 
-    const payload = { phone }
+    const payload = { phoneNumber: phone }
 
     return {
-      token: this.jwtService.sign(payload),
-      user: { phone },
+      access_token: this.jwtService.sign(payload),
+      user: { phoneNumber: phone },
     }
   }
 }

@@ -5,25 +5,40 @@ import ScreenLayout from "../components/ScreenLayout"
 import { fetchAccounts } from "../api/accounts"
 
 type Account = {
-  id: string
-  dept: string
-  accountNo: string
+  id: number
+  department: string
+  accountNumber: string
 }
 
 export default function Dashboard() {
   const navigate = useNavigate()
 
   const [accounts, setAccounts] = useState<Account[]>([])
-  const [selected, setSelected] = useState<string[]>([])
+  const [selected, setSelected] = useState<number[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchAccounts()
-      .then(setAccounts)
-      .finally(() => setLoading(false))
-  }, [])
+    async function load() {
+      try {
+        const data = await fetchAccounts()
 
-  const toggle = (id: string) => {
+        if (!data) {
+          navigate("/")
+          return
+        }
+
+        setAccounts(data)
+      } catch {
+        navigate("/")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    load()
+  }, [navigate])
+
+  const toggle = (id: number) => {
     setSelected((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     )
@@ -71,10 +86,10 @@ export default function Dashboard() {
                   {/* ACCOUNT INFO */}
                   <div>
                     <p className="font-medium text-sm sm:text-base">
-                      {acc.dept}
+                      {acc.department}
                     </p>
                     <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                      Account ID: {acc.accountNo}
+                      Account ID: {acc.accountNumber}
                     </p>
                   </div>
                 </div>
@@ -88,9 +103,7 @@ export default function Dashboard() {
             onClick={() =>
               navigate("/services-dashboard", {
                 state: {
-                  departments: accounts
-                    .filter((a) => selected.includes(a.id))
-                    .map((a) => a.dept),
+                  accounts: accounts.filter((a) => selected.includes(a.id)),
                 },
               })
             }

@@ -5,9 +5,10 @@ export async function sendOtp(phone: string) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ phone }),
+    credentials: "include",
+    cache: "no-store",
   })
 
-  if (!res.ok) throw new Error("Failed to send OTP")
   return res.json()
 }
 
@@ -16,8 +17,19 @@ export async function verifyOtp(phone: string, otp: string) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ phone, otp }),
+    credentials: "include",
+    cache: "no-store",
   })
 
-  if (!res.ok) throw new Error("Invalid OTP")
+  return res.json()
+}
+
+export async function getMe() {
+  const res = await fetch(`${API_BASE}/auth/me`, {
+    credentials: "include",
+    cache: "no-store",
+  })
+
+  if (!res.ok) return null
   return res.json()
 }

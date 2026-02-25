@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-
+import { SessionProvider } from "../context/SessionContext"
 import LanguageSelect from "../pages/LanguageSelect"
 import Login from "../pages/Login"
 import OtpVerify from "../pages/OtpVerify"
@@ -15,25 +15,27 @@ import ProtectedRoute from "../components/ProtectedRoute";
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LanguageSelect />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/otp" element={<OtpVerify />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/services" element={<ServiceSelect />} />
-        <Route path="/pay-bill" element={<PayBill />} />
-        <Route path="/success" element={<PaymentSuccess />} />
-        <Route path="/complaint" element={<RaiseComplaint />} />
-        <Route path="/services-dashboard" element={<ServicesDashboard />} />
-        <Route path="/service-dashboard" element={<ServiceDashboard />} />
-      </Routes>
+      <SessionProvider>
+        <Routes>
+          <Route path="/" element={<LanguageSelect />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/otp" element={<OtpVerify />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/services" element={<ServiceSelect />} />
+          <Route path="/pay-bill" element={<PayBill />} />
+          <Route path="/success" element={<PaymentSuccess />} />
+          <Route path="/complaint" element={<RaiseComplaint />} />
+          <Route path="/services-dashboard" element={<ServicesDashboard />} />
+          <Route path="/service-dashboard" element={<ServiceDashboard />} />
+        </Routes>
+      </SessionProvider>
     </BrowserRouter>
   )
 }

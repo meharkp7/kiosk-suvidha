@@ -1,97 +1,44 @@
 import { useLocation, useNavigate } from "react-router-dom"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import PageWrapper from "../components/PageWrapper"
 import ScreenLayout from "../components/ScreenLayout"
 
-const ICONS: Record<string, string> = {
-  "Electricity Department": "⚡",
-  "Water Supply Board": "💧",
-  "Municipal Corporation": "🏛",
-  "Transport Department": "🚗",
-  "Gas Authority": "🔥",
-  "Telecom Services": "📡",
-  "Housing Board": "🏠",
-}
-
-const SERVICES: Record<string, string[]> = {
-  "Electricity Department": [
-    "Pay Electricity Bill",
-    "Download Bill Receipt",
-    "Consumption History",
-    "Report Power Outage",
-    "Apply for New Meter",
-    "Change Load Request",
-    "Meter Reading",
-    "Name Correction",
-  ],
-  "Water Supply Board": [
-    "Pay Water Bill",
-    "Download Water Bill",
-    "Usage History",
-    "Apply New Connection",
-    "Report Leakage",
-    "Change Connection Type",
-    "Meter Status",
-    "Consumer Update",
-  ],
-  "Municipal Corporation": [
-    "Property Tax Payment",
-    "Property Tax Receipt",
-    "Birth Certificate",
-    "Death Certificate",
-    "Trade License",
-    "Garbage Request",
-    "Building Approval",
-    "Grievance",
-  ],
-  "Transport Department": [
-    "Driving License",
-    "Vehicle Registration",
-    "Challan Payment",
-    "RC Download",
-    "Address Change",
-    "Slot Booking",
-    "Permit Services",
-    "Ownership Transfer",
-  ],
-  "Gas Authority": [
-    "Pay Gas Bill",
-    "New Gas Connection",
-    "Cylinder Booking",
-    "Subsidy Status",
-    "Connection Transfer",
-    "Complaint",
-    "Usage History",
-    "KYC Update",
-  ],
-  "Telecom Services": [
-    "Pay Mobile Bill",
-    "Recharge",
-    "SIM Replacement",
-    "Address Update",
-    "Usage Statement",
-    "Network Complaint",
-    "Plan Change",
-    "Number Porting",
-  ],
-  "Housing Board": [
-    "Rent Payment",
-    "Allotment Status",
-    "Maintenance Charges",
-    "Ownership Details",
-    "NOC Services",
-    "Transfer Request",
-    "Grievance",
-    "Document Download",
-  ],
+type Account = {
+  id: number
+  department: string
+  accountNumber: string
 }
 
 export default function ServicesDashboard() {
   const navigate = useNavigate()
-  const { state } = useLocation()
-  const departments: string[] = state?.departments || []
+  const location = useLocation()
 
-  const [activeDept, setActiveDept] = useState(departments[0])
+  const [accounts, setAccounts] = useState<Account[]>([])
+  const [activeDept, setActiveDept] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (location.state?.accounts) {
+      setAccounts(location.state.accounts)
+      setActiveDept(location.state.accounts[0]?.department)
+      sessionStorage.setItem(
+        "selectedAccounts",
+        JSON.stringify(location.state.accounts)
+      )
+    } else {
+      const saved = sessionStorage.getItem("selectedAccounts")
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        setAccounts(parsed)
+        setActiveDept(parsed[0]?.department)
+      } else {
+        navigate("/dashboard")
+      }
+    }
+  }, [location.state, navigate])
+
+  const departments = [...new Set(accounts.map((a) => a.department))]
+
+  if (!activeDept) return null
 
   return (
     <PageWrapper>
@@ -100,12 +47,10 @@ export default function ServicesDashboard() {
         subtitle="Choose a department and service"
       >
         <div className="flex h-full">
-          {/* LEFT ICON PANEL */}
           <div className="w-20 bg-slate-50 border-r flex flex-col items-center py-6 gap-4">
             {departments.map((dept) => (
               <button
                 key={dept}
-                title={dept}
                 onClick={() => setActiveDept(dept)}
                 className={`w-12 h-12 rounded-full text-xl flex items-center justify-center
                   ${
@@ -114,31 +59,32 @@ export default function ServicesDashboard() {
                       : "bg-white border"
                   }`}
               >
-                {ICONS[dept]}
+                {dept.charAt(0)}
               </button>
             ))}
           </div>
 
-          {/* MAIN CONTENT */}
           <div className="flex-1 p-8 overflow-y-auto">
             <h2 className="text-2xl font-semibold mb-6">
               {activeDept}
             </h2>
 
             <div className="grid grid-cols-2 gap-4">
-              {SERVICES[activeDept].map((service) => (
-                <button
-                  key={service}
-                  onClick={() =>
-                    navigate("/service-dashboard", {
-                      state: { department: activeDept, service },
-                    })
-                  }
-                  className="border rounded-lg p-4 text-left hover:bg-slate-50"
-                >
-                  {service}
-                </button>
-              ))}
+              <button
+                onClick={() =>
+                  navigate("/service-dashboard", {
+                    state: {
+                      department: activeDept,
+                      account: accounts.find(
+                        (a) => a.department === activeDept
+                      ),
+                    },
+                  })
+                }
+                className="border rounded-lg p-4 text-left hover:bg-slate-50"
+              >
+                Open Services
+              </button>
             </div>
           </div>
         </div>

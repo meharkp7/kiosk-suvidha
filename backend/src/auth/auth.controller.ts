@@ -1,7 +1,17 @@
-import { Body, Controller, Post, UnauthorizedException } from "@nestjs/common"
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  UseGuards,
+  Req,
+  Res,
+} from "@nestjs/common"
 import { AuthService } from "./auth.service"
 import { SendOtpDto } from "./dto/send-otp.dto"
 import { VerifyOtpDto } from "./dto/verify-otp.dto"
+import { AuthGuard } from "@nestjs/passport"
+import { Response } from "express"
 
 @Controller("auth")
 export class AuthController {
@@ -13,13 +23,32 @@ export class AuthController {
   }
 
   @Post("verify-otp")
-  verifyOtp(@Body() dto: VerifyOtpDto) {
-    const result = this.authService.verifyOtp(dto.phone, dto.otp)
+  verifyOtp(
+    @Body("phone") phone: string,
+    @Body("otp") otp: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = this.authService.verifyOtp(phone, otp)
 
     if (!result) {
-      throw new UnauthorizedException("Invalid OTP")
+      return { message: "Invalid OTP" }
     }
 
-    return result
+    res.cookie("access_token", result.access_token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 5 * 60 * 1000,
+    })
+
+    return { success: true }
+  }
+
+  @UseGuards(AuthGuard("jwt"))
+  @Get("me")
+  getMe(@Req() req: any) {
+    return {
+      phoneNumber: req.user.phoneNumber,
+    }
   }
 }

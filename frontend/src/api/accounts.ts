@@ -1,14 +1,14 @@
 import { API_BASE } from "./config"
 
 export async function fetchAccounts() {
-  const token = sessionStorage.getItem("token")
-
-  const res = await fetch(`${API_BASE}/accounts`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  const res = await fetch(`${API_BASE}/accounts/me`, {
+    credentials: "include",
+    cache: "no-store",
   })
 
-  if (!res.ok) throw new Error("Failed to fetch accounts")
+  if (!res.ok) {
+    return null
+  }
+
   return res.json()
 }
