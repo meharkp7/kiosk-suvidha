@@ -82,10 +82,10 @@ export default function Login() {
           {/* Quick test numbers */}
           <div className="flex gap-2 mt-4 justify-center flex-wrap">
             <button
-              onClick={() => quickFill("1234567890")}
+              onClick={() => quickFill("9876543210")}
               className="text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1 rounded-full text-slate-600"
             >
-              Test: 1234567890
+              Test: 9876543210
             </button>
             <button
               onClick={() => quickFill("9999999999")}
