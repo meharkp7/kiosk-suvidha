@@ -78,7 +78,8 @@ export class AccountsService {
     }
 
     // Generate and store OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString()
+    // Demo mode: use 123456 for phone number 9876543210
+    const otp = phoneNumber === "9876543210" ? "123456" : Math.floor(100000 + Math.random() * 900000).toString()
     const key = `otp:${phoneNumber}:${department}:${accountNumber}`
     const expiresIn = 5 * 60 // 5 minutes in seconds
     

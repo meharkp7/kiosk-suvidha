@@ -129,40 +129,116 @@ async function main() {
   const transportDept = departments.find(d => d.code === 'transport')!
   const pdsDept = departments.find(d => d.code === 'pds')!
 
-  await Promise.all([
-    // Electricity Services
-    prisma.service.create({ data: { key: 'current-bill', label: 'View Current Bill', departmentId: electricityDept.id } }),
-    prisma.service.create({ data: { key: 'pay-bill', label: 'Pay Bill', departmentId: electricityDept.id } }),
-    prisma.service.create({ data: { key: 'bill-history', label: 'Bill History', departmentId: electricityDept.id } }),
-    prisma.service.create({ data: { key: 'raise-complaint', label: 'Raise Complaint', departmentId: electricityDept.id } }),
-    prisma.service.create({ data: { key: 'complaint-status', label: 'Complaint Status', departmentId: electricityDept.id } }),
-    prisma.service.create({ data: { key: 'transfer', label: 'Transfer Connection', departmentId: electricityDept.id } }),
+  // Create Services sequentially to avoid connection limit
+  const electricityServices = [
+    { key: 'current-bill', label: 'View Current Bill' },
+    { key: 'pay-bill', label: 'Pay Bill' },
+    { key: 'bill-history', label: 'Bill History' },
+    { key: 'raise-complaint', label: 'Raise Complaint' },
+    { key: 'complaint-status', label: 'Complaint Status' },
+    { key: 'transfer', label: 'Transfer Connection' },
+    { key: 'receipt', label: 'Download Receipt' },
+    { key: 'meter-reading', label: 'Submit Meter Reading' },
+    { key: 'new-connection', label: 'New Connection' },
+    { key: 'load-change', label: 'Load Change' },
+    { key: 'name-change', label: 'Name Change' },
+    { key: 'billing-issues', label: 'Billing Issues' }
+  ]
+  
+  for (const svc of electricityServices) {
+    await prisma.service.create({ data: { ...svc, departmentId: electricityDept.id } })
+  }
 
-    // Water Services
-    prisma.service.create({ data: { key: 'current-bill', label: 'View Current Bill', departmentId: waterDept.id } }),
-    prisma.service.create({ data: { key: 'pay-bill', label: 'Pay Bill', departmentId: waterDept.id } }),
-    prisma.service.create({ data: { key: 'history', label: 'Bill History', departmentId: waterDept.id } }),
-    prisma.service.create({ data: { key: 'raise-complaint', label: 'Raise Complaint', departmentId: waterDept.id } }),
+  // Water Services
+  const waterServices = [
+    { key: 'current-bill', label: 'View Current Bill' },
+    { key: 'pay-bill', label: 'Pay Bill' },
+    { key: 'history', label: 'Bill History' },
+    { key: 'raise-complaint', label: 'Raise Complaint' },
+    { key: 'meter-reading', label: 'Submit Meter Reading' },
+    { key: 'new-connection', label: 'New Connection' },
+    { key: 'status', label: 'Request Status' },
+    { key: 'name-change', label: 'Name Change' },
+    { key: 'sewerage', label: 'Sewerage Connection' }
+  ]
+  
+  for (const svc of waterServices) {
+    await prisma.service.create({ data: { ...svc, departmentId: waterDept.id } })
+  }
 
-    // Gas Services
-    prisma.service.create({ data: { key: 'book-cylinder', label: 'Book Cylinder', departmentId: gasDept.id } }),
-    prisma.service.create({ data: { key: 'booking-status', label: 'Booking Status', departmentId: gasDept.id } }),
+  // Gas Services
+  const gasServices = [
+    { key: 'book-cylinder', label: 'Book Cylinder' },
+    { key: 'booking-status', label: 'Booking Status' },
+    { key: 'subsidy-info', label: 'Subsidy Information' },
+    { key: 'new-connection', label: 'New Connection' },
+    { key: 'surrender', label: 'Surrender Connection' },
+    { key: 'damaged-cylinder', label: 'Damaged Cylinder' },
+    { key: 'regulator-issue', label: 'Regulator Issue' },
+    { key: 'double-bottle', label: 'Double Bottle' }
+  ]
+  
+  for (const svc of gasServices) {
+    await prisma.service.create({ data: { ...svc, departmentId: gasDept.id } })
+  }
 
-    // Municipal Services
-    prisma.service.create({ data: { key: 'pay-tax', label: 'Pay Property Tax', departmentId: municipalDept.id } }),
-    prisma.service.create({ data: { key: 'property-details', label: 'Property Details', departmentId: municipalDept.id } }),
-    prisma.service.create({ data: { key: 'raise-complaint', label: 'Raise Complaint', departmentId: municipalDept.id } }),
+  // Municipal Services
+  const municipalServices = [
+    { key: 'pay-tax', label: 'Pay Property Tax' },
+    { key: 'tax-receipt', label: 'Tax Receipt' },
+    { key: 'property-details', label: 'Property Details' },
+    { key: 'raise-complaint', label: 'Raise Complaint' },
+    { key: 'complaint-status', label: 'Complaint Status' },
+    { key: 'birth-certificate', label: 'Birth Certificate' },
+    { key: 'death-certificate', label: 'Death Certificate' },
+    { key: 'marriage-certificate', label: 'Marriage Certificate' },
+    { key: 'trade-license', label: 'Trade License' },
+    { key: 'street-light', label: 'Street Light' },
+    { key: 'garbage', label: 'Garbage Issue' },
+    { key: 'drainage', label: 'Drainage Issue' },
+    { key: 'roads', label: 'Road Issue' }
+  ]
+  
+  for (const svc of municipalServices) {
+    await prisma.service.create({ data: { ...svc, departmentId: municipalDept.id } })
+  }
 
-    // Transport Services
-    prisma.service.create({ data: { key: 'challan-history', label: 'Challan History', departmentId: transportDept.id } }),
-    prisma.service.create({ data: { key: 'vehicle-details', label: 'Vehicle Details', departmentId: transportDept.id } }),
+  // Transport Services
+  const transportServices = [
+    { key: 'vehicle-details', label: 'Vehicle Details' },
+    { key: 'pay-challan', label: 'Pay Challan' },
+    { key: 'challan-history', label: 'Challan History' },
+    { key: 'dl-status', label: 'DL Status' },
+    { key: 'renew-license', label: 'Renew License' },
+    { key: 'learner-license', label: 'Learner License' },
+    { key: 'vehicle-registration', label: 'Vehicle Registration' },
+    { key: 'permit-renewal', label: 'Permit Renewal' },
+    { key: 'fitness-certificate', label: 'Fitness Certificate' },
+    { key: 'noc', label: 'NOC' }
+  ]
+  
+  for (const svc of transportServices) {
+    await prisma.service.create({ data: { ...svc, departmentId: transportDept.id } })
+  }
 
-    // PDS Services
-    prisma.service.create({ data: { key: 'view-ration-card', label: 'View Ration Card', departmentId: pdsDept.id } }),
-    prisma.service.create({ data: { key: 'view-transactions', label: 'View Transactions', departmentId: pdsDept.id } }),
-    prisma.service.create({ data: { key: 'view-entitlement', label: 'View Entitlement', departmentId: pdsDept.id } }),
-    prisma.service.create({ data: { key: 'raise-grievance', label: 'Raise Grievance', departmentId: pdsDept.id } })
-  ])
+  // PDS Services
+  const pdsServices = [
+    { key: 'card-details', label: 'Ration Card Details' },
+    { key: 'transactions', label: 'Transactions' },
+    { key: 'entitlement', label: 'Entitlement' },
+    { key: 'raise-grievance', label: 'Raise Grievance' },
+    { key: 'grievance-status', label: 'Grievance Status' },
+    { key: 'add-member', label: 'Add Member' },
+    { key: 'remove-member', label: 'Remove Member' },
+    { key: 'address-change', label: 'Address Change' },
+    { key: 'card-duplicate', label: 'Duplicate Card' },
+    { key: 'fps-change', label: 'Change FPS' },
+    { key: 'quality-complaint', label: 'Quality Complaint' }
+  ]
+  
+  for (const svc of pdsServices) {
+    await prisma.service.create({ data: { ...svc, departmentId: pdsDept.id } })
+  }
 
   // Create Demo User Account (9876543210)
   const demoPhoneNumber = '9876543210'

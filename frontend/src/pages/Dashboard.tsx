@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../components/KioskLayout"
@@ -28,6 +29,7 @@ type Account = {
 }
 
 export default function Dashboard() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
 
   const [accounts, setAccounts] = useState<Account[]>([])
@@ -92,7 +94,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <KioskLayout title="Linked Accounts" subtitle={`Loading... | ⏱️ ${formatTime(sessionTime)}`}>
+      <KioskLayout title={t("linkedAccounts")} subtitle={`${t("loading")}... | ⏱️ ${formatTime(sessionTime)}`}>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
@@ -102,8 +104,8 @@ export default function Dashboard() {
 
   return (
     <KioskLayout
-      title="Linked Accounts"
-      subtitle={`Select accounts to access services | ⏱️ ${formatTime(sessionTime)}`}
+      title={t("linkedAccounts")}
+      subtitle={`${t("selectAccounts")} | ⏱️ ${formatTime(sessionTime)}`}
       showHeader={true}
       showNav={true}
       onBack={() => navigate("/")}
@@ -112,23 +114,23 @@ export default function Dashboard() {
       <div className="max-w-4xl mx-auto">
         {/* Welcome Banner */}
         <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-6 mb-6 text-white">
-          <h2 className="text-2xl font-bold mb-2">👋 Welcome!</h2>
+          <h2 className="text-2xl font-bold mb-2">👋 {t("welcome")}!</h2>
           <p>
-            You have {accounts.length} linked account{accounts.length !== 1 ? "s" : ""}.
-            Select the accounts you want to use today.
+            {t("linkedAccountsCount", { count: accounts.length })}
+            {t("selectAccountsToUse")}
           </p>
         </div>
 
         {/* Select All Toggle */}
         <div className="flex items-center justify-between mb-4">
           <p className="text-slate-600 font-medium">
-            {selected.length} of {accounts.length} selected
+            {selected.length} {t("of")} {accounts.length} {t("selected")}
           </p>
           <button
             onClick={selectAll}
             className="text-blue-600 font-medium hover:text-blue-800"
           >
-            {selected.length === accounts.length ? "Deselect All" : "Select All"}
+            {selected.length === accounts.length ? t("deselectAll") : t("selectAll")}
           </button>
         </div>
 
@@ -189,16 +191,16 @@ export default function Dashboard() {
           <div className="bg-white rounded-2xl p-8 text-center">
             <span className="text-6xl mb-4 block">📭</span>
             <h3 className="text-xl font-semibold text-slate-800 mb-2">
-              No Linked Accounts
+              {t("noLinkedAccounts")}
             </h3>
             <p className="text-slate-500 mb-4">
-              Please visit your nearest CSC center to link your accounts.
+              {t("visitCscToLink")}
             </p>
             <button
               onClick={() => navigate("/")}
               className="bg-blue-800 text-white px-6 py-3 rounded-xl"
             >
-              Return to Home
+              {t("returnToHome")}
             </button>
           </div>
         )}
@@ -209,17 +211,19 @@ export default function Dashboard() {
             <div className="max-w-4xl mx-auto">
               <button
                 disabled={selected.length === 0}
-                onClick={() =>
+                onClick={() => {
+                  const filteredAccounts = accounts.filter((a) => selected.includes(a.id))
+                  console.log("Dashboard - Passing accounts:", filteredAccounts)
                   navigate("/services-dashboard", {
                     state: {
-                      accounts: accounts.filter((a) => selected.includes(a.id)),
+                      accounts: filteredAccounts,
                     },
                   })
-                }
+                }}
                 className="w-full bg-blue-800 text-white py-4 rounded-xl text-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-all active:scale-[0.98] shadow-lg"
               >
-                Continue with {selected.length} Account
-                {selected.length !== 1 ? "s" : ""} →
+                {t("continueWith")} {selected.length} {t("dashboardAccount")}
+                {selected.length !== 1 ? t("accountsPlural") : ""} →
               </button>
             </div>
           </div>

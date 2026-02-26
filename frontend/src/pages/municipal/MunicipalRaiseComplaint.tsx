@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
@@ -14,6 +15,7 @@ const complaintTypes = [
 ]
 
 export default function MunicipalRaiseComplaint() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const accountNumber = useAccountNumber("municipal")
 
@@ -28,7 +30,7 @@ export default function MunicipalRaiseComplaint() {
   if (!accountNumber) {
     return (
       <KioskLayout
-        title="🏛️ Raise Civic Complaint"
+        title={`🏛️ ${t("raiseComplaint")}`}
         showHeader={true}
         showNav={true}
         onBack={() => navigate("/services-dashboard")}
@@ -36,13 +38,13 @@ export default function MunicipalRaiseComplaint() {
         <div className="max-w-2xl mx-auto text-center">
           <div className="bg-emerald-50 rounded-2xl p-8">
             <span className="text-6xl mb-4 block">🏛️</span>
-            <h2 className="text-2xl font-bold text-emerald-800 mb-2">No Property Selected</h2>
-            <p className="text-emerald-600 mb-6">Please select your Municipal account from the services dashboard</p>
+            <h2 className="text-2xl font-bold text-emerald-800 mb-2">{t("noPropertySelected")}</h2>
+            <p className="text-emerald-600 mb-6">{t("selectMunicipalAccount")}</p>
             <button
               onClick={() => navigate("/services-dashboard")}
               className="bg-emerald-600 text-white px-8 py-4 rounded-xl font-semibold"
             >
-              Go to Services Dashboard →
+              {t("goToServicesDashboard")} →
             </button>
           </div>
         </div>
@@ -52,7 +54,7 @@ export default function MunicipalRaiseComplaint() {
 
   const handleSubmit = async () => {
     if (!complaintType) {
-      alert("Please select complaint type")
+      alert(t("selectComplaintType"))
       return
     }
 

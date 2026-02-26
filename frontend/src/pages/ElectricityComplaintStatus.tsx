@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import PageWrapper from "../components/PageWrapper"
@@ -5,6 +6,7 @@ import ScreenLayout from "../components/ScreenLayout"
 import { fetchLatestComplaint } from "../api/electricity"
 
 export default function ElectricityComplaintStatus() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { state } = useLocation()
 
@@ -28,9 +30,9 @@ export default function ElectricityComplaintStatus() {
   if (loading) {
     return (
       <PageWrapper>
-        <ScreenLayout title="Complaint Status">
+        <ScreenLayout title={t("complaintStatus")}>
           <p className="text-center text-gray-500 text-lg">
-            Checking status...
+            {t("checkingStatus")}
           </p>
         </ScreenLayout>
       </PageWrapper>
@@ -40,22 +42,22 @@ export default function ElectricityComplaintStatus() {
   return (
     <PageWrapper>
       <ScreenLayout
-        title="Complaint Status"
-        subtitle="Latest registered complaint"
+        title={t("complaintStatus")}
+        subtitle={t("latestRegisteredComplaint")}
       >
         <div className="space-y-6">
 
           {!complaint ? (
             <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
               <p className="text-yellow-700 text-lg font-semibold">
-                No complaint found
+                {t("noComplaintFound")}
               </p>
             </div>
           ) : (
             <div className="bg-white border rounded-2xl p-6 shadow-sm space-y-4">
 
               <div className="flex justify-between">
-                <span className="text-gray-600">Issue</span>
+                <span className="text-gray-600">{t("issue")}</span>
                 <span className="font-semibold">
                   {complaint.category}
                 </span>

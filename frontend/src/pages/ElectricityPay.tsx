@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import PageWrapper from "../components/PageWrapper"
@@ -8,6 +9,7 @@ import {
 } from "../api/electricity"
 
 export default function ElectricityPay() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { state } = useLocation()
 
@@ -42,7 +44,7 @@ export default function ElectricityPay() {
         },
       })
     } catch {
-      alert("Payment failed")
+      alert(t("paymentFailed"))
     } finally {
       setPaying(false)
     }
@@ -51,9 +53,9 @@ export default function ElectricityPay() {
   if (loading) {
     return (
       <PageWrapper>
-        <ScreenLayout title="Pay Electricity Bill">
+        <ScreenLayout title={t("payElectricityBill")}>
           <p className="text-center text-gray-500 text-lg">
-            Loading bill...
+            {t("loadingBill")}
           </p>
         </ScreenLayout>
       </PageWrapper>

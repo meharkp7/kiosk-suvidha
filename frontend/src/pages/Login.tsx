@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { sendOtp } from "../api/auth"
 import KioskLayout from "../components/KioskLayout"
 
@@ -7,13 +8,14 @@ export default function Login() {
   const [phone, setPhone] = useState("")
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const handleSendOtp = async () => {
     try {
       setLoading(true)
 
       if (!phone || phone.length !== 10) {
-        alert("Please enter a valid 10-digit phone number")
+        alert(t("invalidPhone") || "Please enter a valid 10-digit phone number")
         return
       }
 
@@ -44,21 +46,22 @@ export default function Login() {
 
   return (
     <KioskLayout
-      title="Mobile Login"
-      subtitle="Enter your 10-digit mobile number"
+      title={t("mobileLogin")}
+      subtitle={t("enterMobile")}
       showHeader={true}
       showNav={true}
       onBack={() => navigate("/")}
       onHome={() => navigate("/")}
     >
-      <div className="max-w-md mx-auto">
+      <div className="max-w-md mx-auto px-4">
         {/* Phone Display */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
-          <label className="block text-sm font-medium text-slate-600 mb-2">
-            Mobile Number (10 digits)
+        <div className="bg-white rounded-2xl shadow-lg p-8 mb-6 text-center">
+          <label className="block text-lg font-semibold text-slate-700 mb-6">
+            {t("mobileNumber")}
           </label>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-2xl font-bold text-slate-400">+91</span>
+          
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <span className="text-3xl font-bold text-slate-400">+91</span>
             <input
               type="tel"
               value={phone}
@@ -67,16 +70,17 @@ export default function Login() {
                 setPhone(val)
               }}
               placeholder="Enter number"
-              className="flex-1 text-4xl font-bold text-slate-800 bg-transparent border-b-2 border-slate-300 focus:border-blue-600 outline-none py-2 text-center"
+              className="text-4xl font-bold text-slate-800 bg-transparent border-b-2 border-slate-300 focus:border-blue-600 outline-none py-2 text-center w-48"
               readOnly
             />
           </div>
-          <p className="text-sm text-slate-400 text-center">
-            {phone.length}/10 digits entered
+          
+          <p className="text-sm text-slate-500 font-medium">
+            {phone.length}/10 {t("digitsEntered")}
           </p>
 
           {/* Quick test numbers */}
-          <div className="flex gap-2 mt-4 justify-center">
+          <div className="flex gap-2 mt-4 justify-center flex-wrap">
             <button
               onClick={() => quickFill("1234567890")}
               className="text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1 rounded-full text-slate-600"
@@ -108,7 +112,7 @@ export default function Login() {
                   className={`h-16 rounded-xl text-2xl font-bold transition-all active:scale-95 ${
                     key === "✓"
                       ? phone.length === 10
-                        ? "bg-green-600 text-white hover:bg-green-700"
+                        ? "bg-green-600 text-white hover:bg-green-700 shadow-lg"
                         : "bg-slate-200 text-slate-400"
                       : key === "⌫"
                       ? "bg-red-100 text-red-600 hover:bg-red-200"
@@ -135,11 +139,11 @@ export default function Login() {
           {loading ? (
             <span className="flex items-center justify-center gap-2">
               <span className="animate-spin">⏳</span>
-              Sending OTP...
+              {t("sendingOtp")}
             </span>
           ) : (
             <span className="flex items-center justify-center gap-2">
-              Send OTP 📱
+              {t("sendOtp")} 📱
             </span>
           )}
         </button>
@@ -147,8 +151,7 @@ export default function Login() {
         {/* Instructions */}
         <div className="mt-6 bg-blue-50 rounded-xl p-4">
           <p className="text-sm text-blue-800 text-center">
-            <span className="font-semibold">💡 Tip:</span> You will receive a
-            6-digit OTP on your mobile number
+            <span className="font-semibold">💡 {t("tip")}:</span> {t("otpTip") || "You will receive a 6-digit OTP on your mobile number"}
           </p>
         </div>
       </div>

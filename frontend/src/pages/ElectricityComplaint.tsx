@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import PageWrapper from "../components/PageWrapper"
@@ -11,6 +12,7 @@ const OPTIONS = [
 ]
 
 export default function ElectricityComplaint() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { state } = useLocation()
 
@@ -35,7 +37,7 @@ export default function ElectricityComplaint() {
 
       setSuccess(true)
     } catch {
-      alert("Failed to register complaint")
+      alert(t("failedToRegisterComplaint"))
     } finally {
       setLoading(false)
     }
@@ -44,8 +46,8 @@ export default function ElectricityComplaint() {
   return (
     <PageWrapper>
       <ScreenLayout
-        title="Raise Power Complaint"
-        subtitle="Select issue type"
+        title={t("raisePowerComplaint")}
+        subtitle={t("selectIssueType")}
       >
         <div className="space-y-8">
 

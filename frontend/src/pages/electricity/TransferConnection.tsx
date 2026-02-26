@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
@@ -5,6 +6,7 @@ import { API_BASE } from "../../api/config"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
 
 export default function TransferConnection() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const accountNumber = useAccountNumber("electricity")
 
@@ -19,7 +21,7 @@ export default function TransferConnection() {
   if (!accountNumber) {
     return (
       <KioskLayout
-        title="⚡ Transfer Connection"
+        title={`⚡ ${t("transferConnection")}`}
         showHeader={true}
         showNav={true}
         onBack={() => navigate("/services-dashboard")}
@@ -27,13 +29,13 @@ export default function TransferConnection() {
         <div className="max-w-2xl mx-auto text-center">
           <div className="bg-amber-50 rounded-2xl p-8">
             <span className="text-6xl mb-4 block">⚡</span>
-            <h2 className="text-2xl font-bold text-amber-800 mb-2">No Account Selected</h2>
-            <p className="text-amber-600 mb-6">Please select your Electricity account from the services dashboard</p>
+            <h2 className="text-2xl font-bold text-amber-800 mb-2">{t("noAccountSelected")}</h2>
+            <p className="text-amber-600 mb-6">{t("selectElectricityAccount")}</p>
             <button
               onClick={() => navigate("/services-dashboard")}
               className="bg-blue-800 text-white px-8 py-4 rounded-xl font-semibold"
             >
-              Go to Services Dashboard →
+              {t("goToServicesDashboard")} →
             </button>
           </div>
         </div>
@@ -43,7 +45,7 @@ export default function TransferConnection() {
 
   const handleSubmit = async () => {
     if (!newAddress.trim()) {
-      alert("Please enter new address")
+      alert(t("enterNewAddress"))
       return
     }
 

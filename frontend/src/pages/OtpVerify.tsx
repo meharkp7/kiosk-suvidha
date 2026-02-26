@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { verifyOtp, getMe } from "../api/auth"
 import { fetchAccounts } from "../api/accounts"
 import KioskLayout from "../components/KioskLayout"
@@ -11,6 +12,7 @@ export default function OtpVerify() {
 
   const navigate = useNavigate()
   const { resetSession } = useSession()
+  const { t } = useTranslation()
 
   const phone = sessionStorage.getItem("phone") || ""
 
@@ -34,7 +36,7 @@ export default function OtpVerify() {
 
       navigate("/dashboard", { replace: true })
     } catch (e) {
-      alert("Invalid OTP. Please try again.")
+      alert(t("invalidOtp") || "Invalid OTP. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -56,28 +58,28 @@ export default function OtpVerify() {
 
   return (
     <KioskLayout
-      title="Verify OTP"
-      subtitle={`Enter 6-digit code sent to +91 ${phone}`}
+      title={t("verifyOtp")}
+      subtitle={`${t("enterOtp")} +91 ${phone}`}
       showHeader={true}
       showNav={true}
       onBack={() => navigate("/login")}
       onHome={() => navigate("/")}
     >
-      <div className="max-w-md mx-auto">
+      <div className="max-w-md mx-auto px-4">
         {/* Phone Display */}
         <div className="bg-blue-50 rounded-2xl p-6 mb-6 text-center">
-          <p className="text-slate-600 mb-2">OTP sent to</p>
+          <p className="text-slate-600 mb-2">{t("otpSentTo")}</p>
           <p className="text-2xl font-bold text-slate-800">+91 {phone}</p>
         </div>
 
         {/* OTP Display */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
-          <label className="block text-sm font-medium text-slate-600 mb-4 text-center">
-            Enter 6-digit OTP
+        <div className="bg-white rounded-2xl shadow-lg p-8 mb-6 text-center">
+          <label className="block text-lg font-semibold text-slate-700 mb-6">
+            {t("enter6DigitOtp")}
           </label>
           
           {/* OTP Boxes */}
-          <div className="flex justify-center gap-3 mb-4">
+          <div className="flex justify-center gap-3 mb-6">
             {[0, 1, 2, 3, 4, 5].map((index) => (
               <div
                 key={index}
@@ -104,12 +106,12 @@ export default function OtpVerify() {
             maxLength={6}
           />
 
-          <p className="text-sm text-slate-400 text-center mt-2">
-            {otp.length}/6 digits
+          <p className="text-sm text-slate-500 mt-3 font-medium">
+            {otp.length}/6 {t("digitsEntered")}
           </p>
 
           {/* Quick test codes */}
-          <div className="flex gap-2 mt-4 justify-center">
+          <div className="flex gap-2 mt-4 justify-center flex-wrap">
             <button
               onClick={() => quickFill("123456")}
               className="text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1 rounded-full text-slate-600"
@@ -141,7 +143,7 @@ export default function OtpVerify() {
                   className={`h-16 rounded-xl text-2xl font-bold transition-all active:scale-95 ${
                     key === "✓"
                       ? otp.length === 6
-                        ? "bg-green-600 text-white hover:bg-green-700"
+                        ? "bg-green-600 text-white hover:bg-green-700 shadow-lg"
                         : "bg-slate-200 text-slate-400"
                       : key === "⌫"
                       ? "bg-red-100 text-red-600 hover:bg-red-200"
@@ -168,11 +170,11 @@ export default function OtpVerify() {
           {loading ? (
             <span className="flex items-center justify-center gap-2">
               <span className="animate-spin">⏳</span>
-              Verifying...
+              {t("verifying")}
             </span>
           ) : (
             <span className="flex items-center justify-center gap-2">
-              Verify & Continue →
+              {t("verifyContinue")} →
             </span>
           )}
         </button>
@@ -180,18 +182,17 @@ export default function OtpVerify() {
         {/* Resend & Help */}
         <div className="mt-6 flex justify-between items-center">
           <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
-            Resend OTP
+            {t("resendOtp")}
           </button>
           <button className="text-slate-500 hover:text-slate-700 text-sm">
-            Need Help?
+            {t("needHelp")}
           </button>
         </div>
 
         {/* Instructions */}
         <div className="mt-6 bg-amber-50 rounded-xl p-4">
           <p className="text-sm text-amber-800 text-center">
-            <span className="font-semibold">⏱️ Note:</span> OTP expires in 5
-            minutes
+            <span className="font-semibold">⏱️ {t("note") || "Note"}:</span> {t("otpExpires")}
           </p>
         </div>
       </div>

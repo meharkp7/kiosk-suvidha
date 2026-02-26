@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next"
 import { useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
 
 export default function BookCylinder() {
+  const { t } = useTranslation()
   const location = useLocation()
   const navigate = useNavigate()
   const { accountNumber } = location.state || {}
@@ -36,18 +38,18 @@ export default function BookCylinder() {
   if (!accountNumber) {
     return (
       <KioskLayout
-        title="Book Cylinder"
+        title={t("bookCylinder")}
         showHeader={true}
         showNav={true}
         onBack={() => navigate("/services-dashboard")}
       >
         <div className="text-center p-8">
-          <h2 className="text-2xl font-bold">No Account Selected</h2>
+          <h2 className="text-2xl font-bold">{t("noAccountSelected")}</h2>
           <button
             onClick={() => navigate("/services-dashboard")}
             className="mt-4 bg-orange-600 text-white px-6 py-3 rounded-lg"
           >
-            Go to Dashboard
+            {t("goToDashboard")}
           </button>
         </div>
       </KioskLayout>

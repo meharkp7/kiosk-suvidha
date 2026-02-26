@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import PageWrapper from "../components/PageWrapper"
@@ -5,6 +6,7 @@ import ScreenLayout from "../components/ScreenLayout"
 import { fetchBillHistory } from "../api/electricity"
 
 export default function ElectricityHistory() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { state } = useLocation()
 
@@ -28,9 +30,9 @@ export default function ElectricityHistory() {
   if (loading) {
     return (
       <PageWrapper>
-        <ScreenLayout title="Bill History">
+        <ScreenLayout title={t("billHistory")}>
           <p className="text-center text-gray-500 text-lg">
-            Loading history...
+            {t("loadingHistory")}
           </p>
         </ScreenLayout>
       </PageWrapper>
@@ -40,14 +42,14 @@ export default function ElectricityHistory() {
   return (
     <PageWrapper>
       <ScreenLayout
-        title="Bill History"
-        subtitle="Last 3 electricity bills"
+        title={t("billHistory")}
+        subtitle={t("lastThreeBills")}
       >
         <div className="space-y-4">
 
           {history.length === 0 ? (
             <p className="text-gray-500 text-center">
-              No billing records found.
+              {t("noBillingRecords")}
             </p>
           ) : (
             history.map((bill) => (

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useEffect, useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import KioskLayout from "../components/KioskLayout"
@@ -95,11 +96,15 @@ const serviceIcons: Record<string, string> = {
 }
 
 export default function ServicesDashboard() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
 
   // Get selected accounts from navigation state (passed from Dashboard)
   const selectedAccounts = location.state?.accounts as Account[] | undefined
+  
+  // Debug logging
+  console.log("ServicesDashboard - selectedAccounts from state:", selectedAccounts)
 
   const [accounts, setAccounts] = useState<Account[]>(selectedAccounts || [])
   const [activeDept, setActiveDept] = useState<string>("")
@@ -111,6 +116,8 @@ export default function ServicesDashboard() {
 
   // Get linked departments from accounts
   const linkedDepts = accounts.map((a) => a.department.toLowerCase())
+  
+  console.log("ServicesDashboard - linkedDepts:", linkedDepts)
   
   // Session timer effect
   useEffect(() => {
@@ -150,32 +157,12 @@ export default function ServicesDashboard() {
     setActiveDept(dept.toLowerCase())
   }
 
-  // If no accounts passed from Dashboard, fetch from API (fallback)
+  // Only use accounts passed from Dashboard - do NOT fetch all accounts
   useEffect(() => {
     if (selectedAccounts && selectedAccounts.length > 0) {
-      // Use accounts passed from Dashboard
       setAccounts(selectedAccounts)
       setActiveDept(selectedAccounts[0].department.toLowerCase())
-      return
     }
-
-    async function loadAccounts() {
-      try {
-        const res = await fetch(`${API_BASE}/accounts/me`, {
-          credentials: "include",
-        })
-        if (res.ok) {
-          const data = await res.json()
-          setAccounts(data)
-          if (data.length > 0) {
-            setActiveDept(data[0].department.toLowerCase())
-          }
-        }
-      } catch (err) {
-        console.error("Failed to load accounts:", err)
-      }
-    }
-    loadAccounts()
   }, [selectedAccounts])
 
   useEffect(() => {
@@ -209,87 +196,87 @@ export default function ServicesDashboard() {
   function getServiceDescription(key: string, dept: string): string {
     const descriptions: Record<string, Record<string, string>> = {
       electricity: {
-        "current-bill": "View and download your latest electricity bill",
-        "pay-bill": "Pay your electricity bill online securely",
-        "bill-history": "View past 12 months billing history",
-        receipt: "Download payment receipts",
-        "raise-complaint": "Report power issues or billing problems",
-        "complaint-status": "Track status of your complaints",
-        transfer: "Apply for connection transfer",
-        "meter-reading": "Submit your monthly meter reading",
-        "new-connection": "Apply for new electricity connection",
-        "load-change": "Increase or decrease connection load",
-        "name-change": "Change account holder name",
-        "billing-issues": "Dispute incorrect bill charges",
+        "current-bill": t("viewBillDesc"),
+        "pay-bill": t("payBillDesc"),
+        "bill-history": t("billHistoryDesc"),
+        receipt: t("downloadReceiptDesc"),
+        "raise-complaint": t("raiseComplaintDesc"),
+        "complaint-status": t("complaintStatusDesc"),
+        transfer: t("transferConnectionDesc"),
+        "meter-reading": t("submitMeterReadingDesc"),
+        "new-connection": t("newConnectionDesc"),
+        "load-change": t("loadChangeDesc"),
+        "name-change": t("nameChangeDesc"),
+        "billing-issues": t("billingIssuesDesc"),
       },
       water: {
-        "current-bill": "View current water consumption bill",
-        "pay-bill": "Pay water charges online",
-        history: "View payment history",
-        "raise-issue": "Report water supply issues",
-        status: "Check complaint status",
-        "meter-reading": "Submit water meter reading",
-        "new-connection": "Apply for new water connection",
-        transfer: "Transfer connection to new owner",
-        "name-change": "Update account holder name",
-        sewerage: "Apply for sewerage connection",
+        "current-bill": t("viewWaterBillDesc"),
+        "pay-bill": t("payWaterBillDesc"),
+        history: t("waterHistoryDesc"),
+        "raise-issue": t("raiseWaterComplaintDesc"),
+        status: t("waterStatusDesc"),
+        "meter-reading": t("waterMeterReadingDesc"),
+        "new-connection": t("newWaterConnectionDesc"),
+        transfer: t("transferWaterConnectionDesc"),
+        "name-change": t("waterNameChangeDesc"),
+        sewerage: t("sewerageConnectionDesc"),
       },
       gas: {
-        "book-cylinder": "Book LPG cylinder refill",
-        "booking-status": "Track cylinder delivery status",
-        "subsidy-info": "View subsidy and payment details",
-        receipt: "Download booking receipts",
-        "raise-complaint": "Report service issues",
-        transfer: "Transfer connection to new address",
-        surrender: "Surrender gas connection",
-        "damaged-cylinder": "Report damaged/leaking cylinder",
-        "regulator-issue": "Report regulator problems",
-        "new-connection": "Apply for new LPG connection",
-        "double-bottle": "Apply for double bottle connection",
+        "book-cylinder": t("bookCylinderDesc"),
+        "booking-status": t("bookingStatusDesc"),
+        "subsidy-info": t("subsidyInfoDesc"),
+        receipt: t("gasReceiptDesc"),
+        "raise-complaint": t("raiseGasComplaintDesc"),
+        transfer: t("transferGasConnectionDesc"),
+        surrender: t("surrenderConnectionDesc"),
+        "damaged-cylinder": t("damagedCylinderDesc"),
+        "regulator-issue": t("regulatorIssueDesc"),
+        "new-connection": t("newGasConnectionDesc"),
+        "double-bottle": t("doubleBottleDesc"),
       },
       municipal: {
-        "pay-tax": "Pay property/house tax online",
-        "tax-receipt": "Download property tax receipts",
-        "property-details": "View your property information",
-        "apply-certificate": "Apply for certificates",
-        "raise-complaint": "Report civic issues",
-        "complaint-status": "Track complaint resolution",
-        "birth-certificate": "Apply for birth certificate",
-        "death-certificate": "Apply for death certificate",
-        "marriage-certificate": "Apply for marriage certificate",
-        "trade-license": "Apply/renew trade license",
-        "street-light": "Report street light issues",
-        garbage: "Report garbage collection issues",
-        drainage: "Report drainage blockage",
-        roads: "Report road damage/potholes",
+        "pay-tax": t("payPropertyTaxDesc"),
+        "tax-receipt": t("taxReceiptDesc"),
+        "property-details": t("propertyDetailsDesc"),
+        "apply-certificate": t("applyCertificateDesc"),
+        "raise-complaint": t("raiseMunicipalComplaintDesc"),
+        "complaint-status": t("municipalComplaintStatusDesc"),
+        "birth-certificate": t("birthCertificateDesc"),
+        "death-certificate": t("deathCertificateDesc"),
+        "marriage-certificate": t("marriageCertificateDesc"),
+        "trade-license": t("tradeLicenseDesc"),
+        "street-light": t("streetLightDesc"),
+        garbage: t("garbageDesc"),
+        drainage: t("drainageDesc"),
+        roads: t("roadsDesc"),
       },
       transport: {
-        "vehicle-details": "View RC and vehicle information",
-        "pay-challan": "Pay traffic challans online",
-        "challan-history": "View violation history",
-        "dl-status": "Check driving license status",
-        "renew-license": "Renew driving license",
-        "learner-license": "Apply for learner license",
-        "vehicle-registration": "Register new vehicle",
-        "permit-renewal": "Renew vehicle permit",
-        "fitness-certificate": "Apply for fitness certificate",
-        noc: "Apply for No Objection Certificate",
+        "vehicle-details": t("vehicleDetailsDesc"),
+        "pay-challan": t("payChallanDesc"),
+        "challan-history": t("challanHistoryDesc"),
+        "dl-status": t("dlStatusDesc"),
+        "renew-license": t("renewLicenseDesc"),
+        "learner-license": t("learnerLicenseDesc"),
+        "vehicle-registration": t("vehicleRegistrationDesc"),
+        "permit-renewal": t("permitRenewalDesc"),
+        "fitness-certificate": t("fitnessCertificateDesc"),
+        noc: t("nocDesc"),
       },
       pds: {
-        "card-details": "View ration card details",
-        entitlement: "Check monthly food grain quota",
-        transactions: "View ration purchase history",
-        "raise-grievance": "Report ration shop issues",
-        "grievance-status": "Track grievance status",
-        "add-member": "Add family member to card",
-        "remove-member": "Remove member from card",
-        "address-change": "Update card address",
-        "card-duplicate": "Apply for duplicate card",
-        "fps-change": "Change Fair Price Shop",
-        "quality-complaint": "Report food quality issues",
+        "card-details": t("rationCardDetailsDesc"),
+        entitlement: t("entitlementDesc"),
+        transactions: t("transactionsDesc"),
+        "raise-grievance": t("raiseGrievanceDesc"),
+        "grievance-status": t("grievanceStatusDesc"),
+        "add-member": t("addMemberDesc"),
+        "remove-member": t("removeMemberDesc"),
+        "address-change": t("addressChangeDesc"),
+        "card-duplicate": t("duplicateCardDesc"),
+        "fps-change": t("fpsChangeDesc"),
+        "quality-complaint": t("qualityComplaintDesc"),
       },
     }
-    return descriptions[dept]?.[key] || "Access this service"
+    return descriptions[dept]?.[key] || t("accessService")
   }
 
   function handleNavigate(serviceKey: string) {
@@ -298,7 +285,7 @@ export default function ServicesDashboard() {
     )
 
     if (!account) {
-      alert("No account found for this department")
+      alert(t("noAccountFound"))
       return
     }
 
@@ -331,9 +318,9 @@ export default function ServicesDashboard() {
         {/* Session Timer Header */}
         <div className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <span className="font-semibold text-slate-700">SUVIDHA Kiosk</span>
+            <span className="font-semibold text-slate-700">{t("suvidhaKiosk")}</span>
             <span className="text-slate-400">|</span>
-            <span className="text-slate-500">Services Dashboard</span>
+            <span className="text-slate-500">{t("servicesDashboard")}</span>
           </div>
           <div className="flex items-center gap-4">
             <div className={`px-4 py-2 rounded-lg font-mono font-medium ${
@@ -345,7 +332,7 @@ export default function ServicesDashboard() {
               onClick={() => navigate("/login")}
               className="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700"
             >
-              End Session
+              {t("endSession")}
             </button>
           </div>
         </div>
@@ -359,15 +346,15 @@ export default function ServicesDashboard() {
                   <span className="text-4xl">{departmentIcons[activeDept]}</span>
                   <div>
                     <h1 className="text-3xl font-bold capitalize text-gray-900">
-                      {activeDept} Department
+                      {t(`${activeDept}Dept`)}
                     </h1>
                     <p className="text-gray-500">
-                      Account: {activeAccount?.accountNumber || "N/A"}
+                      {t("account")}: {activeAccount?.accountNumber || "N/A"}
                     </p>
                   </div>
                 </div>
                 <p className="text-gray-600 ml-14">
-                  Select a service below to access government e-services
+                  {t("selectServiceBelow")}
                 </p>
               </div>
 
@@ -377,7 +364,7 @@ export default function ServicesDashboard() {
                 </div>
               ) : services.length === 0 ? (
                 <div className="text-center py-16 bg-white rounded-xl shadow-sm">
-                  <p className="text-gray-500">No services available</p>
+                  <p className="text-gray-500">{t("noServicesAvailable")}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -419,18 +406,18 @@ export default function ServicesDashboard() {
 
               <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-blue-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-blue-900 mb-1">💡 Tip</h4>
+                  <h4 className="font-semibold text-blue-900 mb-1">💡 {t("tip")}</h4>
                   <p className="text-sm text-blue-700">
-                    Use the sidebar to switch between departments
+                    {t("useSidebarToSwitch")}
                   </p>
                 </div>
                 <div className="bg-green-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-green-900 mb-1">✅ Verified</h4>
-                  <p className="text-sm text-green-700">All transactions are secure</p>
+                  <h4 className="font-semibold text-green-900 mb-1">✅ {t("verified")}</h4>
+                  <p className="text-sm text-green-700">{t("secureTransactions")}</p>
                 </div>
                 <div className="bg-purple-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-purple-900 mb-1">📞 Support</h4>
-                  <p className="text-sm text-purple-700">24/7 helpline available</p>
+                  <h4 className="font-semibold text-purple-900 mb-1">📞 {t("support")}</h4>
+                  <p className="text-sm text-purple-700">{t("helplineAvailable")}</p>
                 </div>
               </div>
             </>
@@ -439,19 +426,19 @@ export default function ServicesDashboard() {
               <div className="text-center bg-white rounded-2xl shadow-lg p-12 max-w-md">
                 <span className="text-6xl mb-4 block">👋</span>
                 <h2 className="text-2xl font-bold text-slate-800 mb-2">
-                  Welcome to SUVIDHA
+                  {t("welcomeToSuvidha")}
                 </h2>
                 <p className="text-slate-500 mb-6">
-                  You have {linkedDepts.length} linked department{linkedDepts.length !== 1 ? "s" : ""}.
+                  {t("linkedDepartmentsCount", { count: linkedDepts.length })}
                   {linkedDepts.length === 0 && (
                     <span className="block mt-2 text-amber-600">
-                      Click on a department in the sidebar to link your account.
+                      {t("clickSidebarToLink")}
                     </span>
                   )}
                 </p>
                 {linkedDepts.length > 0 && (
                   <p className="text-slate-600">
-                    Select a department from the sidebar to view services.
+                    {t("selectDeptFromSidebar")}
                   </p>
                 )}
               </div>

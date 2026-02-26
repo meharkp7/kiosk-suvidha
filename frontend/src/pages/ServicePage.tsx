@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import KioskLayout from "../components/KioskLayout"
@@ -39,6 +40,7 @@ const serviceIcons: Record<string, string> = {
 }
 
 export default function ServicePage() {
+  const { t } = useTranslation()
   const location = useLocation()
   const navigate = useNavigate()
   const { accountNumber, department, service } = location.state || {}
@@ -49,7 +51,7 @@ export default function ServicePage() {
 
   useEffect(() => {
     if (!accountNumber || !department || !service) {
-      setError("Missing required information")
+      setError(t("missingRequiredInfo"))
       setLoading(false)
       return
     }

@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next"
 import { useLocation, useNavigate } from "react-router-dom"
 import PageWrapper from "../components/PageWrapper"
 import ScreenLayout from "../components/ScreenLayout"
 
 export default function ElectricityReceipt() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { state } = useLocation()
 
@@ -16,24 +18,24 @@ export default function ElectricityReceipt() {
   return (
     <PageWrapper>
       <ScreenLayout
-        title="Payment Receipt"
-        subtitle="Transaction Successful"
+        title={t("paymentReceipt")}
+        subtitle={t("transactionSuccessful")}
       >
         <div className="space-y-8">
 
           <div className="bg-white border rounded-2xl p-8 shadow-sm space-y-4 text-center">
 
             <p className="text-2xl font-bold text-green-600">
-              Payment Successful
+              {t("paymentSuccessful")}
             </p>
 
             <div className="space-y-2 text-lg">
               <p>
-                Amount Paid: <span className="font-semibold">₹{amount}</span>
+                {t("amountPaid")}: <span className="font-semibold">₹{amount}</span>
               </p>
 
               <p>
-                Reference ID:
+                {t("referenceId")}:
                 <span className="font-semibold block mt-1">
                   {reference}
                 </span>
@@ -46,7 +48,7 @@ export default function ElectricityReceipt() {
             onClick={() => navigate("/services-dashboard")}
             className="w-full h-16 bg-blue-800 text-white text-xl font-semibold rounded-2xl"
           >
-            Back to Services
+            {t("backToServices")}
           </button>
 
         </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
@@ -15,6 +16,7 @@ interface BillRecord {
 }
 
 export default function BillHistory() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const accountNumber = useAccountNumber("electricity")
 
@@ -24,7 +26,7 @@ export default function BillHistory() {
 
   useEffect(() => {
     if (!accountNumber) {
-      setError("No account selected")
+      setError(t("noAccountSelected"))
       setLoading(false)
       return
     }
@@ -38,10 +40,10 @@ export default function BillHistory() {
           const data = await res.json()
           setBills(data)
         } else {
-          setError("Failed to load history")
+          setError(t("failedToLoadHistory"))
         }
       } catch (err) {
-        setError("Network error")
+        setError(t("networkError"))
       } finally {
         setLoading(false)
       }
@@ -54,7 +56,7 @@ export default function BillHistory() {
   if (!accountNumber) {
     return (
       <KioskLayout
-        title="⚡ Bill History"
+        title={`⚡ ${t("billHistory")}`}
         showHeader={true}
         showNav={true}
         onBack={() => navigate("/services-dashboard")}
@@ -62,13 +64,13 @@ export default function BillHistory() {
         <div className="max-w-2xl mx-auto text-center">
           <div className="bg-amber-50 rounded-2xl p-8">
             <span className="text-6xl mb-4 block">⚡</span>
-            <h2 className="text-2xl font-bold text-amber-800 mb-2">No Account Selected</h2>
-            <p className="text-amber-600 mb-6">Please select your Electricity account from the services dashboard</p>
+            <h2 className="text-2xl font-bold text-amber-800 mb-2">{t("noAccountSelected")}</h2>
+            <p className="text-amber-600 mb-6">{t("selectElectricityAccount")}</p>
             <button
               onClick={() => navigate("/services-dashboard")}
               className="bg-blue-800 text-white px-8 py-4 rounded-xl font-semibold"
             >
-              Go to Services Dashboard →
+              {t("goToServicesDashboard")} →
             </button>
           </div>
         </div>
@@ -78,8 +80,8 @@ export default function BillHistory() {
 
   return (
     <KioskLayout
-      title="⚡ Bill History"
-      subtitle={`Account: ${accountNumber}`}
+      title={`⚡ ${t("billHistory")}`}
+      subtitle={`${t("account")}: ${accountNumber}`}
       showHeader={true}
       showNav={true}
       onBack={() => navigate("/services-dashboard")}
@@ -98,8 +100,8 @@ export default function BillHistory() {
         ) : bills.length === 0 ? (
           <div className="bg-amber-50 rounded-2xl p-8 text-center">
             <span className="text-6xl mb-4 block">📭</span>
-            <h2 className="text-2xl font-bold text-amber-800">No History Found</h2>
-            <p className="text-amber-600">No billing history available for this account</p>
+            <h2 className="text-2xl font-bold text-amber-800">{t("noHistoryFound")}</h2>
+            <p className="text-amber-600">{t("noBillingHistory")}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -123,7 +125,7 @@ export default function BillHistory() {
                     <p className="text-slate-500">
                       {new Date(bill.billingDate).toLocaleDateString()}
                     </p>
-                    <p className="text-sm text-slate-400">{bill.unitsConsumed} kWh</p>
+                    <p className="text-sm text-slate-400">{bill.unitsConsumed} {t("kwh")}</p>
                   </div>
                 </div>
 
@@ -138,11 +140,11 @@ export default function BillHistory() {
                         : "bg-red-100 text-red-700"
                     }`}
                   >
-                    {bill.status}
+                    {bill.status === "PAID" ? t("paid") : t("unpaid")}
                   </span>
                   {bill.paidDate && (
                     <p className="text-sm text-slate-400 mt-1">
-                      Paid: {new Date(bill.paidDate).toLocaleDateString()}
+                      {t("paid")}: {new Date(bill.paidDate).toLocaleDateString()}
                     </p>
                   )}
                 </div>

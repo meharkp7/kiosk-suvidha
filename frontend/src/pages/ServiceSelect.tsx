@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import PageWrapper from "../components/PageWrapper"
@@ -10,6 +11,7 @@ const departments = [
 ]
 
 export default function ServiceSelect() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [selected, setSelected] = useState<string[]>([])
 
@@ -24,11 +26,11 @@ export default function ServiceSelect() {
   return (
     <PageWrapper>
       <h2 className="text-2xl font-semibold mb-4">
-        Select Departments
+        {t("selectDepartments")}
       </h2>
 
       <p className="text-gray-500 mb-8">
-        You may select multiple departments
+        {t("youMaySelectMultipleDepartments")}
       </p>
 
       <div className="space-y-4 mb-10">
@@ -57,7 +59,7 @@ export default function ServiceSelect() {
         }
         className="w-full bg-blue-800 text-white py-4 rounded-lg text-lg disabled:opacity-50"
       >
-        View Available Services
+        {t("viewAvailableServices")}
       </button>
     </PageWrapper>
   )

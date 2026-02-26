@@ -1,14 +1,16 @@
+import { useTranslation } from "react-i18next"
 import { useLocation, useNavigate } from "react-router-dom"
 import PageWrapper from "../components/PageWrapper"
 
 export default function ServiceDashboard() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { state } = useLocation()
 
   if (!state) {
     return (
       <PageWrapper>
-        <p>No service selected.</p>
+        <p>{t("noServiceSelected")}</p>
       </PageWrapper>
     )
   }
@@ -30,9 +32,9 @@ export default function ServiceDashboard() {
           onClick={() => navigate("/pay-bill")}
           className="border rounded-lg p-6 text-left hover:bg-slate-50"
         >
-          <p className="font-medium">Proceed with Service</p>
+          <p className="font-medium">{t("proceedWithService")}</p>
           <p className="text-sm text-gray-500">
-            Continue to complete this service
+            {t("continueToCompleteService")}
           </p>
         </button>
 
@@ -40,9 +42,9 @@ export default function ServiceDashboard() {
           onClick={() => navigate("/complaint")}
           className="border rounded-lg p-6 text-left hover:bg-slate-50"
         >
-          <p className="font-medium">Raise a Complaint</p>
+          <p className="font-medium">{t("raiseAComplaint")}</p>
           <p className="text-sm text-gray-500">
-            Report an issue related to this service
+            {t("reportIssueRelatedToService")}
           </p>
         </button>
       </div>

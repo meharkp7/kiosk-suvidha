@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import PageWrapper from "../components/PageWrapper"
@@ -5,6 +6,7 @@ import ScreenLayout from "../components/ScreenLayout"
 import { createTransferRequest } from "../api/electricity"
 
 export default function ElectricityTransfer() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { state } = useLocation()
 
@@ -26,7 +28,7 @@ export default function ElectricityTransfer() {
 
       setSuccess(true)
     } catch {
-      alert("Failed to submit request")
+      alert(t("failedToSubmitRequest"))
     } finally {
       setLoading(false)
     }
@@ -35,8 +37,8 @@ export default function ElectricityTransfer() {
   return (
     <PageWrapper>
       <ScreenLayout
-        title="Transfer Connection"
-        subtitle="Request shift to new residence"
+        title={t("transferConnection")}
+        subtitle={t("requestShiftToNewResidence")}
       >
         <div className="space-y-8">
 
@@ -44,12 +46,11 @@ export default function ElectricityTransfer() {
             <>
               <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
                 <p className="text-yellow-700 font-semibold text-lg">
-                  Connection Transfer Request
+                  {t("connectionTransferRequest")}
                 </p>
                 <p className="text-yellow-700 text-sm mt-2">
-                  This kiosk will only register your request.
-                  You must visit the local electricity office
-                  with required documents to complete transfer.
+                  {t("kioskWillRegisterRequest")}
+                  {t("visitLocalOfficeToComplete")}
                 </p>
               </div>
 
@@ -58,21 +59,19 @@ export default function ElectricityTransfer() {
                 disabled={loading}
                 className="w-full h-16 bg-blue-800 text-white text-xl font-semibold rounded-2xl disabled:opacity-50"
               >
-                {loading ? "Submitting..." : "Submit Transfer Request"}
+                {loading ? t("submitting") : t("submitTransferRequest")}
               </button>
             </>
           ) : (
             <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
               <p className="text-green-700 text-lg font-semibold">
-                Transfer request submitted successfully
+                {t("transferRequestRegistered")}
               </p>
               <p className="text-green-600 text-sm mt-2">
-                Please visit your local electricity office
-                with valid address proof to complete the process.
+                {t("visitOfficeWithDocuments")}
               </p>
             </div>
           )}
-
         </div>
       </ScreenLayout>
     </PageWrapper>

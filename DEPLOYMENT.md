@@ -86,7 +86,7 @@ npm i -g vercel
 ### 3.2 Configure Environment
 Create `/frontend/.env.production`:
 ```env
-VITE_API_BASE_URL=https://kiosk-suvidha-backend.onrender.com
+VITE_API_BASE_URL=https://kiosk-suvidha.onrender.com
 ```
 
 ### 3.3 Deploy

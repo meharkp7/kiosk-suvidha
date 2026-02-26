@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
@@ -17,6 +18,7 @@ interface Transaction {
 }
 
 export default function ViewTransactions() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const accountNumber = useAccountNumber("pds")
 
@@ -52,7 +54,7 @@ export default function ViewTransactions() {
   if (!accountNumber) {
     return (
       <KioskLayout
-        title="🍚 Ration Transactions"
+        title={t("rationTransactions")}
         showHeader={true}
         showNav={true}
         onBack={() => navigate("/services-dashboard")}
@@ -60,13 +62,13 @@ export default function ViewTransactions() {
         <div className="max-w-2xl mx-auto text-center">
           <div className="bg-violet-50 rounded-2xl p-8">
             <span className="text-6xl mb-4 block">🍚</span>
-            <h2 className="text-2xl font-bold text-violet-800 mb-2">No Card Selected</h2>
-            <p className="text-violet-600 mb-6">Please select your PDS account from the services dashboard</p>
+            <h2 className="text-2xl font-bold text-violet-800 mb-2">{t("noCardSelected")}</h2>
+            <p className="text-violet-600 mb-6">{t("selectPdsAccount")}</p>
             <button
               onClick={() => navigate("/services-dashboard")}
               className="bg-violet-600 text-white px-8 py-4 rounded-xl font-semibold"
             >
-              Go to Services Dashboard →
+              {t("goToServicesDashboard")} →
             </button>
           </div>
         </div>
@@ -76,7 +78,7 @@ export default function ViewTransactions() {
 
   return (
     <KioskLayout
-      title="🍚 Ration Transactions"
+      title={t("rationTransactions")}
       subtitle={`Card: ${accountNumber}`}
       showHeader={true}
       showNav={true}
@@ -90,27 +92,19 @@ export default function ViewTransactions() {
         ) : transactions.length === 0 ? (
           <div className="bg-violet-50 rounded-2xl p-8 text-center">
             <span className="text-6xl mb-4 block">📭</span>
-            <h2 className="text-2xl font-bold text-violet-800">No Transactions</h2>
-            <p className="text-violet-600">No ration purchases recorded</p>
+            <h2 className="text-2xl font-bold text-violet-800">{t("noTransactions")}</h2>
+            <p className="text-violet-600">{t("noTransactionsFound")}</p>
           </div>
         ) : (
           <div className="space-y-4">
-            {transactions.map((t) => (
-              <div key={t.id} className="bg-white rounded-xl shadow-lg p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <p className="text-sm text-slate-500">Transaction ID</p>
-                    <p className="text-lg font-bold text-slate-800">{t.transactionId}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-slate-500">Date</p>
-                    <p className="font-semibold">
-                      {new Date(t.transactionDate).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-4 gap-4 mb-4">
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold mb-4">{t("transactionHistory")}</h3>
+              {transactions.map((t) => (
+                <div key={t.id} className="bg-white rounded-xl shadow-lg p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-sm text-slate-500">{t("transactionId")}</p>
+                      <p className="text-lg font-bold text-slate-800">{t.transactionId}</p>
                   {t.riceTaken > 0 && (
                     <div className="bg-amber-50 rounded-lg p-3 text-center">
                       <p className="font-bold text-amber-800">{t.riceTaken} kg</p>

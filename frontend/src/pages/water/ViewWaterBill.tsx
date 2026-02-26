@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
@@ -15,6 +16,7 @@ interface BillData {
 }
 
 export default function ViewWaterBill() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const accountNumber = useAccountNumber("water")
 
@@ -50,7 +52,7 @@ export default function ViewWaterBill() {
   if (!accountNumber) {
     return (
       <KioskLayout
-        title="💧 Water Bill"
+        title={`💧 ${t("waterBill")}`}
         showHeader={true}
         showNav={true}
         onBack={() => navigate("/services-dashboard")}
@@ -58,13 +60,13 @@ export default function ViewWaterBill() {
         <div className="max-w-2xl mx-auto text-center">
           <div className="bg-blue-50 rounded-2xl p-8">
             <span className="text-6xl mb-4 block">💧</span>
-            <h2 className="text-2xl font-bold text-blue-800 mb-2">No Account Selected</h2>
-            <p className="text-blue-600 mb-6">Please select your Water account from the services dashboard</p>
+            <h2 className="text-2xl font-bold text-blue-800 mb-2">{t("noAccountSelected")}</h2>
+            <p className="text-blue-600 mb-6">{t("selectWaterAccount")}</p>
             <button
               onClick={() => navigate("/services-dashboard")}
               className="bg-blue-800 text-white px-8 py-4 rounded-xl font-semibold"
             >
-              Go to Services Dashboard →
+              {t("goToServicesDashboard")} →
             </button>
           </div>
         </div>

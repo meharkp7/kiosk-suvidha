@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
@@ -17,6 +18,7 @@ interface BookingData {
 }
 
 export default function GasBookingStatus() {
+  const { t } = useTranslation()
   const location = useLocation()
   const navigate = useNavigate()
   const { accountNumber: stateAccountNumber } = location.state || {}

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
@@ -14,6 +15,7 @@ const grievanceTypes = [
 ]
 
 export default function PdsRaiseGrievance() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const accountNumber = useAccountNumber("pds")
 
@@ -27,7 +29,7 @@ export default function PdsRaiseGrievance() {
   if (!accountNumber) {
     return (
       <KioskLayout
-        title="🍚 Raise Grievance"
+        title={`🍚 ${t("raiseGrievance")}`}
         showHeader={true}
         showNav={true}
         onBack={() => navigate("/services-dashboard")}
@@ -35,13 +37,13 @@ export default function PdsRaiseGrievance() {
         <div className="max-w-2xl mx-auto text-center">
           <div className="bg-violet-50 rounded-2xl p-8">
             <span className="text-6xl mb-4 block">🍚</span>
-            <h2 className="text-2xl font-bold text-violet-800 mb-2">No Card Selected</h2>
-            <p className="text-violet-600 mb-6">Please select your PDS account from the services dashboard</p>
+            <h2 className="text-2xl font-bold text-violet-800 mb-2">{t("noCardSelected")}</h2>
+            <p className="text-violet-600 mb-6">{t("selectPdsAccount")}</p>
             <button
               onClick={() => navigate("/services-dashboard")}
               className="bg-violet-600 text-white px-8 py-4 rounded-xl font-semibold"
             >
-              Go to Services Dashboard →
+              {t("goToServicesDashboard")} →
             </button>
           </div>
         </div>
@@ -51,7 +53,7 @@ export default function PdsRaiseGrievance() {
 
   const handleSubmit = async () => {
     if (!grievanceType) {
-      alert("Please select grievance type")
+      alert(t("selectGrievanceType"))
       return
     }
 

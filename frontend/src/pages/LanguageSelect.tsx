@@ -15,7 +15,7 @@ const languages = [
 
 export default function LanguageSelect() {
   const navigate = useNavigate()
-  const { i18n } = useTranslation()
+  const { i18n, t } = useTranslation()
 
   const handleLanguageSelect = (langCode: string) => {
     i18n.changeLanguage(langCode)
@@ -25,43 +25,61 @@ export default function LanguageSelect() {
   return (
     <KioskLayout
       title="SUVIDHA Kiosk"
-      subtitle="Government Services Portal"
+      subtitle={t("governmentServices")}
       showHeader={true}
       showNav={false}
       onHome={() => navigate("/")}
     >
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-gradient-to-r from-blue-800 to-blue-600 rounded-2xl p-8 mb-8 text-white text-center">
-          <h1 className="text-4xl font-bold mb-4">सुविधा / SUVIDHA</h1>
-          <p className="text-xl">One Nation One Kiosk - Government Services</p>
-          <p className="text-blue-200 mt-2">Accessible • Digital • Inclusive</p>
+      <div className="max-w-6xl mx-auto px-4">
+        {/* Hero Section */}
+        <div className="bg-gradient-to-r from-blue-800 to-blue-600 rounded-3xl p-12 mb-8 text-white text-center shadow-2xl">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 tracking-tight">
+            सुविधा / SUVIDHA
+          </h1>
+          <p className="text-2xl md:text-3xl mb-4 font-medium">
+            {t("oneNationOneKiosk")}
+          </p>
+          <div className="flex justify-center gap-6 text-lg">
+            <span className="bg-white/20 px-4 py-2 rounded-full backdrop-blur">
+              {t("accessible")}
+            </span>
+            <span className="bg-white/20 px-4 py-2 rounded-full backdrop-blur">
+              {t("digital")}
+            </span>
+            <span className="bg-white/20 px-4 py-2 rounded-full backdrop-blur">
+              {t("inclusive")}
+            </span>
+          </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-center text-slate-800 mb-2">
-            Select Your Language
+        {/* Language Selection */}
+        <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-800 mb-4">
+            {t("selectLanguage")}
           </h2>
-          <p className="text-center text-slate-500 mb-8">
+          <p className="text-center text-slate-500 mb-8 text-lg">
             अपनी भाषा चुनें / Select language / భాష ఎంచుకోండి
           </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
             {languages.map((lang) => (
               <button
                 key={lang.code}
                 onClick={() => handleLanguageSelect(lang.code)}
-                className={`group relative overflow-hidden rounded-xl p-6 text-center transition-all duration-300 hover:shadow-lg hover:scale-[1.02] border-2 ${
+                className={`group relative overflow-hidden rounded-2xl p-8 text-center transition-all duration-300 hover:shadow-2xl hover:scale-105 border-3 ${
                   i18n.language === lang.code
-                    ? "border-blue-600 bg-blue-50"
-                    : "border-slate-200 hover:border-blue-300"
+                    ? "border-blue-600 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg"
+                    : "border-slate-200 hover:border-blue-400 bg-white"
                 }`}
               >
-                <span className="text-4xl mb-3 block">{lang.flag}</span>
-                <p className="font-bold text-lg text-slate-800">{lang.native}</p>
-                <p className="text-sm text-slate-500">{lang.name}</p>
+                <span className="text-5xl mb-4 block filter drop-shadow-md">{lang.flag}</span>
+                <p className="font-bold text-xl text-slate-800 mb-2 leading-tight">
+                  {lang.native}
+                </p>
+                <p className="text-sm text-slate-600 font-medium">{lang.name}</p>
                 
                 {i18n.language === lang.code && (
-                  <div className="absolute top-2 right-2 w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm">
+                  <div className="absolute top-3 right-3 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-lg shadow-lg animate-pulse">
                     ✓
                   </div>
                 )}
@@ -69,31 +87,32 @@ export default function LanguageSelect() {
             ))}
           </div>
 
-          <div className="mt-8 pt-6 border-t border-slate-200">
+          <div className="mt-10 pt-8 border-t-2 border-slate-200">
             <button
               onClick={() => navigate("/login")}
-              className="w-full bg-blue-800 text-white py-5 rounded-xl text-xl font-semibold hover:bg-blue-700 transition-all active:scale-[0.98] shadow-lg"
+              className="w-full bg-gradient-to-r from-blue-800 to-blue-600 text-white py-6 rounded-2xl text-2xl font-bold hover:from-blue-700 hover:to-blue-500 transition-all active:scale-[0.98] shadow-xl"
             >
-              Continue / आगे बढ़ें →
+              {t("continue")} / आगे बढ़ें →
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-          <div className="bg-green-50 rounded-xl p-6 text-center">
-            <span className="text-4xl mb-2 block">🔒</span>
-            <h3 className="font-semibold text-green-900">Secure</h3>
-            <p className="text-sm text-green-700">Aadhaar verified login</p>
+        {/* Features */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-8 text-center border border-green-200 shadow-lg">
+            <span className="text-5xl mb-4 block filter drop-shadow">🔒</span>
+            <h3 className="font-bold text-2xl text-green-900 mb-3">{t("secure")}</h3>
+            <p className="text-green-700 font-medium">{t("aadhaarVerified")}</p>
           </div>
-          <div className="bg-blue-50 rounded-xl p-6 text-center">
-            <span className="text-4xl mb-2 block">⚡</span>
-            <h3 className="font-semibold text-blue-900">Fast</h3>
-            <p className="text-sm text-blue-700">Quick service delivery</p>
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 text-center border border-blue-200 shadow-lg">
+            <span className="text-5xl mb-4 block filter drop-shadow">⚡</span>
+            <h3 className="font-bold text-2xl text-blue-900 mb-3">{t("fast")}</h3>
+            <p className="text-blue-700 font-medium">{t("quickService")}</p>
           </div>
-          <div className="bg-purple-50 rounded-xl p-6 text-center">
-            <span className="text-4xl mb-2 block">♿</span>
-            <h3 className="font-semibold text-purple-900">Accessible</h3>
-            <p className="text-sm text-purple-700">Designed for everyone</p>
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-8 text-center border border-purple-200 shadow-lg">
+            <span className="text-5xl mb-4 block filter drop-shadow">♿</span>
+            <h3 className="font-bold text-2xl text-purple-900 mb-3">{t("accessible")}</h3>
+            <p className="text-purple-700 font-medium">{t("accessibleDesc")}</p>
           </div>
         </div>
       </div>

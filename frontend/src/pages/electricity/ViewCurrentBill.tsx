@@ -1,5 +1,6 @@
+import { useTranslation } from "react-i18next"
 import { useEffect, useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
 import { API_BASE } from "../../api/config"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
@@ -21,6 +22,7 @@ interface BillData {
 }
 
 export default function ViewCurrentBill() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const accountNumber = useAccountNumber("electricity")
 
@@ -30,7 +32,7 @@ export default function ViewCurrentBill() {
 
   useEffect(() => {
     if (!accountNumber) {
-      setError("No account selected")
+      setError(t("noAccountSelected"))
       setLoading(false)
       return
     }
@@ -44,10 +46,10 @@ export default function ViewCurrentBill() {
           const data = await res.json()
           setBill(data)
         } else {
-          setError("Failed to load bill")
+          setError(t("failedToLoadBill"))
         }
       } catch (err) {
-        setError("Network error")
+        setError(t("networkError"))
       } finally {
         setLoading(false)
       }
@@ -60,7 +62,7 @@ export default function ViewCurrentBill() {
   if (!accountNumber) {
     return (
       <KioskLayout
-        title="Current Bill"
+        title={t("currentBill")}
         showHeader={true}
         showNav={true}
         onBack={() => navigate("/services-dashboard")}
@@ -68,13 +70,13 @@ export default function ViewCurrentBill() {
         <div className="max-w-2xl mx-auto text-center">
           <div className="bg-amber-50 rounded-2xl p-8">
             <span className="text-6xl mb-4 block">⚡</span>
-            <h2 className="text-2xl font-bold text-amber-800 mb-2">No Account Selected</h2>
-            <p className="text-amber-600 mb-6">Please select your Electricity account from the services dashboard</p>
+            <h2 className="text-2xl font-bold text-amber-800 mb-2">{t("noAccountSelected")}</h2>
+            <p className="text-amber-600 mb-6">{t("selectElectricityAccount")}</p>
             <button
               onClick={() => navigate("/services-dashboard")}
               className="bg-blue-800 text-white px-8 py-4 rounded-xl font-semibold"
             >
-              Go to Services Dashboard →
+              {t("goToServicesDashboard")} →
             </button>
           </div>
         </div>
@@ -84,7 +86,7 @@ export default function ViewCurrentBill() {
 
   if (loading) {
     return (
-      <KioskLayout title="Current Bill" showHeader={true} showNav={true}>
+      <KioskLayout title={t("currentBill")} showHeader={true} showNav={true}>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-amber-600"></div>
         </div>
@@ -95,7 +97,7 @@ export default function ViewCurrentBill() {
   if (error || !bill) {
     return (
       <KioskLayout
-        title="Current Bill"
+        title={t("currentBill")}
         showHeader={true}
         showNav={true}
         onBack={() => navigate("/services-dashboard")}
@@ -103,12 +105,12 @@ export default function ViewCurrentBill() {
         <div className="max-w-2xl mx-auto">
           <div className="bg-red-50 rounded-2xl p-8 text-center">
             <span className="text-6xl mb-4 block">⚠️</span>
-            <h2 className="text-2xl font-bold text-red-800 mb-2">{error || "No bill found"}</h2>
+            <h2 className="text-2xl font-bold text-red-800 mb-2">{error || t("noBillFound")}</h2>
             <button
               onClick={() => navigate("/services-dashboard")}
               className="mt-4 bg-blue-800 text-white px-8 py-4 rounded-xl font-semibold"
             >
-              Back to Services
+              {t("backToServices")}
             </button>
           </div>
         </div>
@@ -118,8 +120,8 @@ export default function ViewCurrentBill() {
 
   return (
     <KioskLayout
-      title="⚡ Electricity Bill"
-      subtitle={`Account: ${accountNumber}`}
+      title={`⚡ ${t("electricityBill")}`}
+      subtitle={`${t("account")}: ${accountNumber}`}
       showHeader={true}
       showNav={true}
       onBack={() => navigate("/services-dashboard")}
@@ -130,11 +132,11 @@ export default function ViewCurrentBill() {
         <div className="bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl p-6 mb-6 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-amber-100">Billing Month</p>
+              <p className="text-amber-100">{t("billingMonth")}</p>
               <h2 className="text-3xl font-bold">{bill.billingMonth}</h2>
             </div>
             <div className="text-right">
-              <p className="text-amber-100">Total Amount</p>
+              <p className="text-amber-100">{t("totalAmount")}</p>
               <h2 className="text-4xl font-bold">₹{bill.totalAmount.toFixed(2)}</h2>
             </div>
           </div>
@@ -146,11 +148,11 @@ export default function ViewCurrentBill() {
                   : "bg-red-500 text-white"
               }`}
             >
-              {bill.status}
+              {bill.status === "PAID" ? t("paid") : t("unpaid")}
             </span>
             {bill.status !== "PAID" && (
               <span className="text-amber-100">
-                Due Date: {new Date(bill.dueDate).toLocaleDateString()}
+                {t("dueDate")}: {new Date(bill.dueDate).toLocaleDateString()}
               </span>
             )}
           </div>
@@ -158,7 +160,7 @@ export default function ViewCurrentBill() {
 
         {/* Bill Details */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
-          <h3 className="text-xl font-bold text-slate-800 mb-6">Bill Breakdown</h3>
+          <h3 className="text-xl font-bold text-slate-800 mb-6">{t("billBreakdown")}</h3>
 
           <div className="space-y-4">
             <div className="flex justify-between items-center p-4 bg-slate-50 rounded-xl">
