@@ -1,9 +1,11 @@
+import { useTranslation } from "react-i18next"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
 
 export default function WaterStatus() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const accountNumber = useAccountNumber("water")
   const [requests, setRequests] = useState([

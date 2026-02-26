@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import KioskLayout from "../../components/KioskLayout"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
 
 export default function WaterMeterReading() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const accountNumber = useAccountNumber("water")
   const [meterReading, setMeterReading] = useState("")
@@ -26,7 +28,7 @@ export default function WaterMeterReading() {
     e.preventDefault()
     
     if (!meterReading || !photo) {
-      alert("Please enter meter reading and upload photo")
+      alert(t("enterReadingAndPhoto"))
       return
     }
 

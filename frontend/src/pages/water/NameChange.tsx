@@ -1,9 +1,11 @@
+import { useTranslation } from "react-i18next"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
 
 export default function WaterNameChange() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const accountNumber = useAccountNumber("water")
   const [currentName, setCurrentName] = useState("John Doe")
@@ -14,7 +16,10 @@ export default function WaterNameChange() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!newName || !reason) return
+    if (!newName || !reason) {
+      alert(t("fillRequiredFields"))
+      return
+    }
     setLoading(true)
     setTimeout(() => {
       setSubmitted(true)

@@ -99,46 +99,49 @@ export default function ViewTransactions() {
           <div className="space-y-4">
             <div className="bg-white rounded-xl shadow-sm p-6">
               <h3 className="text-lg font-semibold mb-4">{t("transactionHistory")}</h3>
-              {transactions.map((t) => (
-                <div key={t.id} className="bg-white rounded-xl shadow-lg p-6">
+              {transactions.map((transaction) => (
+                <div key={transaction.id} className="bg-white rounded-xl shadow-lg p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <p className="text-sm text-slate-500">{t("transactionId")}</p>
-                      <p className="text-lg font-bold text-slate-800">{t.transactionId}</p>
-                  {t.riceTaken > 0 && (
+                      <p className="text-lg font-bold text-slate-800">{transaction.transactionId}</p>
+                    </div>
+                  </div>
+                  {transaction.riceTaken > 0 && (
                     <div className="bg-amber-50 rounded-lg p-3 text-center">
-                      <p className="font-bold text-amber-800">{t.riceTaken} kg</p>
+                      <p className="font-bold text-amber-800">{transaction.riceTaken} kg</p>
                       <p className="text-xs text-amber-600">Rice</p>
                     </div>
                   )}
-                  {t.wheatTaken > 0 && (
+                  {transaction.wheatTaken > 0 && (
                     <div className="bg-yellow-50 rounded-lg p-3 text-center">
-                      <p className="font-bold text-yellow-800">{t.wheatTaken} kg</p>
+                      <p className="font-bold text-yellow-800">{transaction.wheatTaken} kg</p>
                       <p className="text-xs text-yellow-600">Wheat</p>
                     </div>
                   )}
-                  {t.sugarTaken > 0 && (
+                  {transaction.sugarTaken > 0 && (
                     <div className="bg-pink-50 rounded-lg p-3 text-center">
-                      <p className="font-bold text-pink-800">{t.sugarTaken} kg</p>
+                      <p className="font-bold text-pink-800">{transaction.sugarTaken} kg</p>
                       <p className="text-xs text-pink-600">Sugar</p>
                     </div>
                   )}
-                  {t.keroseneTaken > 0 && (
+                  {transaction.keroseneTaken > 0 && (
                     <div className="bg-blue-50 rounded-lg p-3 text-center">
-                      <p className="font-bold text-blue-800">{t.keroseneTaken} L</p>
+                      <p className="font-bold text-blue-800">{transaction.keroseneTaken} L</p>
                       <p className="text-xs text-blue-600">Kerosene</p>
                     </div>
                   )}
-                </div>
 
-                <div className="flex items-center justify-between p-3 bg-violet-50 rounded-lg">
-                  <span className="text-violet-800 font-semibold">Total: ₹{t.totalAmount}</span>
-                  <span className="text-sm text-violet-600">FPS: {t.fpsCode}</span>
+                  <div className="flex items-center justify-between p-3 bg-violet-50 rounded-lg">
+                    <span className="text-violet-800 font-semibold">Total: ₹{transaction.totalAmount}</span>
+                    <span className="text-sm text-violet-600">FPS: {transaction.fpsCode}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+        )
+        </div>
+          )}
       </div>
     </KioskLayout>
   )
