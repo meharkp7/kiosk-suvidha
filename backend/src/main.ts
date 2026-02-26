@@ -12,7 +12,8 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin'],
   })
 
-  await app.listen(3000)
-  console.log('🚀 Backend running on http://localhost:3000')
+  const port = process.env.PORT || 3000
+  await app.listen(port)
+  console.log(`🚀 Backend running on port ${port}`)
 }
 bootstrap()
