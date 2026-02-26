@@ -1,27 +1,21 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { TypeOrmModule } from '@nestjs/typeorm'
-
 import { AuthModule } from './auth/auth.module'
 import { UsersModule } from './users/users.module'
-import { AccountsModule } from './accounts/accounts.module'
+import { AccountsModule } from "./accounts/accounts.module"
 import { ServicesModule } from './services/services.module'
+import { PrismaModule } from "./prisma/prisma.module"
+import { PaymentModule } from "./payment/payment.module"
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      url: process.env.DATABASE_URL,
-      autoLoadEntities: true,
-      synchronize: true,
-    }),
-
+    PrismaModule,
     AuthModule,
     UsersModule,
     AccountsModule,
     ServicesModule,
+    PaymentModule,
   ],
 })
 export class AppModule {}

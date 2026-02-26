@@ -1,0 +1,133 @@
+import { useState } from "react"
+import LinkAccountModal from "./LinkAccountModal"
+
+const allDepartments = [
+  { id: "electricity", name: "Electricity", icon: "⚡", color: "#fbbf24" },
+  { id: "water", name: "Water", icon: "💧", color: "#3b82f6" },
+  { id: "gas", name: "Gas", icon: "🔥", color: "#f97316" },
+  { id: "municipal", name: "Municipal", icon: "🏛️", color: "#10b981" },
+  { id: "transport", name: "Transport", icon: "🚗", color: "#6366f1" },
+  { id: "pds", name: "Ration", icon: "🍚", color: "#8b5cf6" },
+]
+
+interface SidebarProps {
+  activeDept: string
+  linkedDepts: string[]
+  onDeptChange: (dept: string) => void
+  onAccountLinked: (dept: string, accountNumber: string) => void
+}
+
+export default function Sidebar({
+  activeDept,
+  linkedDepts,
+  onDeptChange,
+  onAccountLinked,
+}: SidebarProps) {
+  const [collapsed, setCollapsed] = useState(false)
+  const [linkingDept, setLinkingDept] = useState<string | null>(null)
+
+  const handleLinkSuccess = (deptId: string, accountNumber: string) => {
+    onAccountLinked(deptId, accountNumber)
+    setLinkingDept(null)
+    onDeptChange(deptId)
+  }
+
+  const linkingDeptInfo = allDepartments.find((d) => d.id === linkingDept)
+
+  return (
+    <>
+      <div
+        className={`${
+          collapsed ? "w-20" : "w-72"
+        } h-screen bg-slate-900 text-white flex flex-col transition-all duration-300 flex-shrink-0`}
+      >
+        {/* Logo Area */}
+        <div className="p-4 border-b border-slate-700 flex items-center justify-between">
+          {!collapsed && (
+            <div>
+              <h1 className="font-bold text-lg">SUVIDHA</h1>
+              <p className="text-xs text-slate-400">e-Governance</p>
+            </div>
+          )}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="p-2 rounded hover:bg-slate-700 text-slate-400"
+          >
+            {collapsed ? "→" : "←"}
+          </button>
+        </div>
+
+        {/* Department Navigation */}
+        <nav className="flex-1 py-4 overflow-y-auto">
+          {allDepartments.map((dept) => {
+            const isLinked = linkedDepts.includes(dept.id)
+            const isActive = activeDept === dept.id
+
+            return (
+              <div key={dept.id} className="px-3 mb-2">
+                {isLinked ? (
+                  <button
+                    onClick={() => onDeptChange(dept.id)}
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all hover:bg-slate-800 ${
+                      isActive ? "bg-slate-800 border-r-4" : ""
+                    }`}
+                    style={{
+                      borderRightColor: isActive ? dept.color : "transparent",
+                    }}
+                  >
+                    <span className="text-2xl">{dept.icon}</span>
+                    {!collapsed && (
+                      <div className="text-left flex-1">
+                        <p className="font-medium text-sm">{dept.name}</p>
+                        <p className="text-xs text-green-400">Linked ✓</p>
+                      </div>
+                    )}
+                    {isActive && !collapsed && (
+                      <span className="text-xs text-slate-400">●</span>
+                    )}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setLinkingDept(dept.id)}
+                    className="w-full flex items-center gap-3 p-3 rounded-xl transition-all hover:bg-slate-800 opacity-60"
+                  >
+                    <span className="text-2xl opacity-50">{dept.icon}</span>
+                    {!collapsed && (
+                      <div className="text-left flex-1">
+                        <p className="font-medium text-sm text-slate-400">{dept.name}</p>
+                        <p className="text-xs text-amber-400">Click to Link +</p>
+                      </div>
+                    )}
+                  </button>
+                )}
+              </div>
+            )
+          })}
+        </nav>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-slate-700">
+          {!collapsed && (
+            <div className="text-xs text-slate-400">
+              <p className="font-semibold mb-1">Linked: {linkedDepts.length}/6</p>
+              <p>Link accounts to access services</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Link Account Modal */}
+      {linkingDept && linkingDeptInfo && (
+        <LinkAccountModal
+          department={linkingDept}
+          departmentName={linkingDeptInfo.name}
+          icon={linkingDeptInfo.icon}
+          onClose={() => setLinkingDept(null)}
+          onSuccess={(accountNumber) =>
+            handleLinkSuccess(linkingDept, accountNumber)
+          }
+        />
+      )}
+    </>
+  )
+}

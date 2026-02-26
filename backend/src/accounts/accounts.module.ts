@@ -1,11 +1,10 @@
-import { Module } from '@nestjs/common'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { LinkedAccount } from './entities/linked-account.entity'
-import { AccountsService } from './accounts.service'
-import { AccountsController } from './accounts.controller'
+import { Module } from "@nestjs/common"
+import { AccountsController } from "./accounts.controller"
+import { AccountsService } from "./accounts.service"
+import { PrismaModule } from "../prisma/prisma.module"
 
 @Module({
-  imports: [TypeOrmModule.forFeature([LinkedAccount])],
+  imports: [PrismaModule],
   controllers: [AccountsController],
   providers: [AccountsService],
 })

@@ -1,8 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { sendOtp } from "../api/auth" 
-import PageWrapper from "../components/PageWrapper"
-import ScreenLayout from "../components/ScreenLayout"
+import { sendOtp } from "../api/auth"
+import KioskLayout from "../components/KioskLayout"
 
 export default function Login() {
   const [phone, setPhone] = useState("")
@@ -12,34 +11,147 @@ export default function Login() {
   const handleSendOtp = async () => {
     try {
       setLoading(true)
+
+      if (!phone || phone.length !== 10) {
+        alert("Please enter a valid 10-digit phone number")
+        return
+      }
+
       await sendOtp(phone)
       sessionStorage.setItem("phone", phone)
       navigate("/otp")
     } catch (e) {
-      alert("Failed to send OTP")
+      const errorMessage = e instanceof Error ? e.message : "Unknown error"
+      alert(`Failed to send OTP: ${errorMessage}`)
     } finally {
       setLoading(false)
     }
   }
 
-  return (
-    <PageWrapper>
-      <ScreenLayout title="Mobile Number Login" subtitle="Enter your mobile number">
-        <input
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          placeholder="Enter mobile number"
-          className="w-full border rounded-lg p-4 mb-6"
-        />
+  const appendDigit = (digit: string) => {
+    if (phone.length < 10) {
+      setPhone(phone + digit)
+    }
+  }
 
+  const clearLast = () => {
+    setPhone(phone.slice(0, -1))
+  }
+
+  const quickFill = (number: string) => {
+    setPhone(number)
+  }
+
+  return (
+    <KioskLayout
+      title="Mobile Login"
+      subtitle="Enter your 10-digit mobile number"
+      showHeader={true}
+      showNav={true}
+      onBack={() => navigate("/")}
+      onHome={() => navigate("/")}
+    >
+      <div className="max-w-md mx-auto">
+        {/* Phone Display */}
+        <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
+          <label className="block text-sm font-medium text-slate-600 mb-2">
+            Mobile Number (10 digits)
+          </label>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-2xl font-bold text-slate-400">+91</span>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, "").slice(0, 10)
+                setPhone(val)
+              }}
+              placeholder="Enter number"
+              className="flex-1 text-4xl font-bold text-slate-800 bg-transparent border-b-2 border-slate-300 focus:border-blue-600 outline-none py-2 text-center"
+              readOnly
+            />
+          </div>
+          <p className="text-sm text-slate-400 text-center">
+            {phone.length}/10 digits entered
+          </p>
+
+          {/* Quick test numbers */}
+          <div className="flex gap-2 mt-4 justify-center">
+            <button
+              onClick={() => quickFill("1234567890")}
+              className="text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1 rounded-full text-slate-600"
+            >
+              Test: 1234567890
+            </button>
+            <button
+              onClick={() => quickFill("9999999999")}
+              className="text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1 rounded-full text-slate-600"
+            >
+              Test: 9999999999
+            </button>
+          </div>
+        </div>
+
+        {/* Numeric Keypad */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+          <div className="grid grid-cols-3 gap-3">
+            {["1", "2", "3", "4", "5", "6", "7", "8", "9", "⌫", "0", "✓"].map(
+              (key) => (
+                <button
+                  key={key}
+                  onClick={() => {
+                    if (key === "⌫") clearLast()
+                    else if (key === "✓") handleSendOtp()
+                    else appendDigit(key)
+                  }}
+                  disabled={key === "✓" && (loading || phone.length !== 10)}
+                  className={`h-16 rounded-xl text-2xl font-bold transition-all active:scale-95 ${
+                    key === "✓"
+                      ? phone.length === 10
+                        ? "bg-green-600 text-white hover:bg-green-700"
+                        : "bg-slate-200 text-slate-400"
+                      : key === "⌫"
+                      ? "bg-red-100 text-red-600 hover:bg-red-200"
+                      : "bg-slate-100 text-slate-800 hover:bg-slate-200"
+                  }`}
+                >
+                  {loading && key === "✓" ? (
+                    <span className="animate-spin">⏳</span>
+                  ) : (
+                    key
+                  )}
+                </button>
+              )
+            )}
+          </div>
+        </div>
+
+        {/* Alternative: Send OTP Button */}
         <button
           onClick={handleSendOtp}
           disabled={loading || phone.length !== 10}
-          className="w-full bg-blue-800 text-white py-4 rounded-lg disabled:opacity-50"
+          className="w-full bg-blue-800 text-white py-5 rounded-xl text-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-all active:scale-[0.98] shadow-lg"
         >
-          {loading ? "Sending OTP..." : "Send OTP"}
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <span className="animate-spin">⏳</span>
+              Sending OTP...
+            </span>
+          ) : (
+            <span className="flex items-center justify-center gap-2">
+              Send OTP 📱
+            </span>
+          )}
         </button>
-      </ScreenLayout>
-    </PageWrapper>
+
+        {/* Instructions */}
+        <div className="mt-6 bg-blue-50 rounded-xl p-4">
+          <p className="text-sm text-blue-800 text-center">
+            <span className="font-semibold">💡 Tip:</span> You will receive a
+            6-digit OTP on your mobile number
+          </p>
+        </div>
+      </div>
+    </KioskLayout>
   )
 }

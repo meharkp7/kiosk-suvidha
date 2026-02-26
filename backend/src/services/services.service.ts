@@ -2,34 +2,90 @@ import { Injectable } from "@nestjs/common"
 
 @Injectable()
 export class ServicesService {
-  getServices(department: string) {
-    const map: Record<string, any[]> = {
-      "Electricity Department": [
-        { id: "elec-pay", name: "Pay Electricity Bill" },
-        { id: "elec-complaint", name: "Raise Power Complaint" },
-        { id: "elec-history", name: "View Bill History" },
-        { id: "elec-load", name: "Apply Load Change" },
-      ],
-      "Water Supply Board": [
-        { id: "water-pay", name: "Pay Water Bill" },
-        { id: "water-complaint", name: "Report Leakage" },
-        { id: "water-connection", name: "New Connection" },
-        { id: "water-history", name: "View Usage History" },
-      ],
-      "Municipal Corporation": [
-        { id: "prop-tax", name: "Pay Property Tax" },
-        { id: "trade-lic", name: "Trade License" },
-        { id: "birth-cert", name: "Birth Certificate" },
-        { id: "death-cert", name: "Death Certificate" },
-      ],
-      "Transport Department": [
-        { id: "dl-renew", name: "Renew Driving License" },
-        { id: "rc-status", name: "RC Status" },
-        { id: "challan", name: "Pay Challan" },
-        { id: "vehicle-info", name: "Vehicle Info" },
-      ],
-    }
+  private servicesMap = {
+    electricity: [
+      { key: "current-bill", label: "View Current Bill" },
+      { key: "pay-bill", label: "Pay Electricity Bill" },
+      { key: "bill-history", label: "View Bill History" },
+      { key: "receipt", label: "Download Receipt" },
+      { key: "raise-complaint", label: "Raise Complaint" },
+      { key: "complaint-status", label: "Track Complaint Status" },
+      { key: "transfer", label: "Transfer Connection" },
+      { key: "meter-reading", label: "Submit Meter Reading" },
+      { key: "new-connection", label: "Apply New Connection" },
+      { key: "load-change", label: "Change Load/Category" },
+      { key: "name-change", label: "Change Name" },
+      { key: "billing-issues", label: "Billing Disputes" },
+    ],
+    water: [
+      { key: "current-bill", label: "View Water Bill" },
+      { key: "pay-bill", label: "Pay Water Bill" },
+      { key: "history", label: "Previous Payments" },
+      { key: "raise-issue", label: "Report Water Issue" },
+      { key: "status", label: "Track Complaint" },
+      { key: "meter-reading", label: "Submit Meter Reading" },
+      { key: "new-connection", label: "New Water Connection" },
+      { key: "transfer", label: "Transfer Connection" },
+      { key: "name-change", label: "Change Name" },
+      { key: "sewerage", label: "Sewerage Services" },
+    ],
+    gas: [
+      { key: "book-cylinder", label: "Book LPG Cylinder" },
+      { key: "booking-status", label: "Check Booking Status" },
+      { key: "subsidy-info", label: "View Subsidy Info" },
+      { key: "receipt", label: "Download Receipt" },
+      { key: "raise-complaint", label: "Raise Complaint" },
+      { key: "transfer", label: "Transfer Connection" },
+      { key: "surrender", label: "Surrender Connection" },
+      { key: "damaged-cylinder", label: "Report Damaged Cylinder" },
+      { key: "regulator-issue", label: "Regulator Complaint" },
+      { key: "new-connection", label: "New LPG Connection" },
+      { key: "double-bottle", label: "Apply Double Bottle" },
+    ],
+    municipal: [
+      { key: "pay-tax", label: "Pay Property Tax" },
+      { key: "tax-receipt", label: "Download Tax Receipt" },
+      { key: "property-details", label: "View Property Details" },
+      { key: "apply-certificate", label: "Apply for Certificate" },
+      { key: "raise-complaint", label: "Raise Civic Complaint" },
+      { key: "complaint-status", label: "Track Complaint Status" },
+      { key: "birth-certificate", label: "Birth Certificate" },
+      { key: "death-certificate", label: "Death Certificate" },
+      { key: "marriage-certificate", label: "Marriage Certificate" },
+      { key: "trade-license", label: "Trade License" },
+      { key: "street-light", label: "Street Light Issue" },
+      { key: "garbage", label: "Garbage Collection" },
+      { key: "drainage", label: "Drainage Issue" },
+      { key: "roads", label: "Road Maintenance" },
+    ],
+    transport: [
+      { key: "vehicle-details", label: "View Vehicle Details" },
+      { key: "pay-challan", label: "Pay Traffic Challan" },
+      { key: "challan-history", label: "View Challan History" },
+      { key: "dl-status", label: "Check DL/RC Status" },
+      { key: "renew-license", label: "Renew Driving License" },
+      { key: "learner-license", label: "Apply Learner License" },
+      { key: "vehicle-registration", label: "Vehicle Registration" },
+      { key: "permit-renewal", label: "Permit Renewal" },
+      { key: "fitness-certificate", label: "Fitness Certificate" },
+      { key: "noc", label: "Apply NOC" },
+    ],
+    pds: [
+      { key: "card-details", label: "View Ration Card" },
+      { key: "entitlement", label: "Check Entitlement" },
+      { key: "transactions", label: "View Transactions" },
+      { key: "raise-grievance", label: "Lodge Grievance" },
+      { key: "grievance-status", label: "Track Grievance" },
+      { key: "add-member", label: "Add Family Member" },
+      { key: "remove-member", label: "Remove Member" },
+      { key: "address-change", label: "Change Address" },
+      { key: "card-duplicate", label: "Duplicate Card" },
+      { key: "fps-change", label: "Change FPS Dealer" },
+      { key: "quality-complaint", label: "Food Quality Issue" },
+    ],
+  }
 
-    return map[department] || []
+  getServices(department: string) {
+    return this.servicesMap[department.toLowerCase()] || []
   }
 }

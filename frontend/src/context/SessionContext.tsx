@@ -12,15 +12,17 @@ const SessionContext = createContext<SessionContextType | null>(null)
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate()
   const [timeLeft, setTimeLeft] = useState(0)
+  const [sessionStarted, setSessionStarted] = useState(false)
 
   useEffect(() => {
-    if (timeLeft <= 0) return
+    if (timeLeft <= 0 || !sessionStarted) return
 
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(interval)
-          navigate("/", { replace: true })
+          console.log("SessionContext: Session expired, redirecting to login")
+          navigate("/login", { replace: true })
           return 0
         }
         return prev - 1
@@ -28,15 +30,17 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [timeLeft, navigate])
+  }, [timeLeft, sessionStarted, navigate])
 
   const resetSession = () => {
+    console.log("SessionContext: Resetting session timer to 300 seconds")
     setTimeLeft(300) // 5 minutes
+    setSessionStarted(true)
   }
 
   const endSession = () => {
     setTimeLeft(0)
-    navigate("/", { replace: true })
+    navigate("/login", { replace: true })
   }
 
   return (

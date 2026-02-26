@@ -11,8 +11,17 @@ export default function ProtectedRoute({ children }: Props) {
 
   useEffect(() => {
     async function checkAuth() {
-      const user = await getMe()
-      setAuthorized(!!user)
+      console.log("ProtectedRoute: Checking authentication...")
+      try {
+        // Add a small delay to ensure cookies are set
+        await new Promise(resolve => setTimeout(resolve, 100))
+        const user = await getMe()
+        console.log("ProtectedRoute: User data:", user)
+        setAuthorized(!!user)
+      } catch (error) {
+        console.error("ProtectedRoute: Auth check error:", error)
+        setAuthorized(false)
+      }
     }
 
     checkAuth()
@@ -23,6 +32,7 @@ export default function ProtectedRoute({ children }: Props) {
   }
 
   if (!authorized) {
+    console.log("ProtectedRoute: Not authorized, redirecting to /login")
     return <Navigate to="/login" replace />
   }
 

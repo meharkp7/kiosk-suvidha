@@ -1,0 +1,514 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// CORE MODELS
+// ============================================
+
+model LinkedAccount {
+  id            Int      @id @default(autoincrement())
+  phoneNumber   String
+  department    String
+  accountNumber String
+  createdAt     DateTime @default(now())
+
+  @@unique([phoneNumber, accountNumber])
+}
+
+model Department {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  services  Service[]
+  createdAt DateTime @default(now())
+}
+
+model Service {
+  id            String     @id @default(uuid())
+  key           String
+  label         String
+  departmentId  String
+  department    Department @relation(fields: [departmentId], references: [id])
+  createdAt     DateTime   @default(now())
+
+  @@unique([key, departmentId])
+}
+
+// ============================================
+// ELECTRICITY DEPARTMENT
+// ============================================
+
+model ElectricityAccount {
+  id            String   @id @default(uuid())
+  accountNumber String   @unique
+  consumerName  String
+  address       String
+  meterNumber   String?
+  connectionType String  @default("DOMESTIC")
+  sanctionedLoad Float  @default(2.0)
+  createdAt     DateTime @default(now())
+
+  bills         ElectricityBill[]
+  complaints    ElectricityComplaint[]
+  payments      ElectricityPayment[]
+  transfers     ElectricityTransferRequest[]
+}
+
+model ElectricityBill {
+  id            String   @id @default(uuid())
+  accountNumber String
+  billingMonth  String
+  billingDate   DateTime @default(now())
+  unitsConsumed Int
+  fixedCharge   Float
+  energyCharge  Float
+  tax           Float
+  lateFee       Float    @default(0)
+  totalAmount   Float
+  dueDate       DateTime
+  paidDate      DateTime?
+  status        String   @default("UNPAID")
+  tariffSlab    String?
+  createdAt     DateTime @default(now())
+
+  account ElectricityAccount @relation(fields: [accountNumber], references: [accountNumber])
+
+  @@unique([accountNumber, billingMonth])
+}
+
+model ElectricityPayment {
+  id            String   @id @default(uuid())
+  accountNumber String
+  billId        String?
+  amount        Float
+  reference     String   @unique
+  paymentMethod String   @default("RAZORPAY")
+  status        String   @default("INITIATED")
+  razorpayOrderId    String?
+  razorpayPaymentId  String?
+  razorpaySignature  String?
+  receiptUrl    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  account ElectricityAccount @relation(fields: [accountNumber], references: [accountNumber])
+}
+
+model ElectricityComplaint {
+  id                  String   @id @default(uuid())
+  accountNumber       String
+  complaintType       String
+  subType             String
+  priority            String   @default("NORMAL")
+  complaintId         String   @unique
+  description         String?
+  status              String   @default("REGISTERED")
+  assignedTo          String?
+  estimatedResolution DateTime?
+  resolvedAt          DateTime?
+  escalationLevel     Int      @default(0)
+  remarks             String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  account ElectricityAccount @relation(fields: [accountNumber], references: [accountNumber])
+}
+
+model ElectricityTransferRequest {
+  id                  String   @id @default(uuid())
+  accountNumber       String
+  requestId           String   @unique
+  status              String   @default("REQUESTED")
+  newAddress          String?
+  documentSubmitted   Boolean  @default(false)
+  officeVisitRequired Boolean  @default(false)
+  approvedBy          String?
+  approvedAt          DateTime?
+  rejectionReason     String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  account ElectricityAccount @relation(fields: [accountNumber], references: [accountNumber])
+}
+
+// ============================================
+// WATER SUPPLY BOARD
+// ============================================
+
+model WaterAccount {
+  id            String   @id @default(uuid())
+  accountNumber String   @unique
+  consumerName  String
+  address       String
+  meterNumber   String?
+  connectionType String  @default("DOMESTIC")
+  category      String   @default("RESIDENTIAL")
+  createdAt     DateTime @default(now())
+
+  bills         WaterBill[]
+  complaints    WaterComplaint[]
+  payments      WaterPayment[]
+  transfers     WaterTransferRequest[]
+}
+
+model WaterBill {
+  id            String   @id @default(uuid())
+  accountNumber String
+  billingMonth    String
+  billingDate     DateTime @default(now())
+  meterReading    Int?
+  unitsConsumed   Int
+  waterCharge     Float
+  sewerageCharge  Float
+  tax             Float
+  lateFee         Float    @default(0)
+  totalAmount     Float
+  dueDate         DateTime
+  paidDate        DateTime?
+  status          String   @default("UNPAID")
+  createdAt       DateTime @default(now())
+
+  account WaterAccount @relation(fields: [accountNumber], references: [accountNumber])
+
+  @@unique([accountNumber, billingMonth])
+}
+
+model WaterPayment {
+  id            String   @id @default(uuid())
+  accountNumber String
+  billId        String?
+  amount        Float
+  reference     String   @unique
+  paymentMethod String   @default("RAZORPAY")
+  status        String   @default("INITIATED")
+  razorpayOrderId    String?
+  razorpayPaymentId  String?
+  razorpaySignature  String?
+  receiptUrl    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  account WaterAccount @relation(fields: [accountNumber], references: [accountNumber])
+}
+
+model WaterComplaint {
+  id                  String   @id @default(uuid())
+  accountNumber       String
+  complaintType       String
+  subType             String
+  priority            String   @default("NORMAL")
+  complaintId         String   @unique
+  description         String?
+  status              String   @default("REGISTERED")
+  assignedTo          String?
+  estimatedResolution DateTime?
+  resolvedAt          DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  account WaterAccount @relation(fields: [accountNumber], references: [accountNumber])
+}
+
+model WaterTransferRequest {
+  id                  String   @id @default(uuid())
+  accountNumber       String
+  requestId           String   @unique
+  status              String   @default("REQUESTED")
+  newAddress          String?
+  documentSubmitted   Boolean  @default(false)
+  approvedBy          String?
+  approvedAt          DateTime?
+  rejectionReason     String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  account WaterAccount @relation(fields: [accountNumber], references: [accountNumber])
+}
+
+// ============================================
+// GAS UTILITY (LPG)
+// ============================================
+
+model GasAccount {
+  id            String   @id @default(uuid())
+  consumerNumber String  @unique
+  lpgId         String   @unique
+  consumerName  String
+  address       String
+  distributorName String
+  distributorCode String
+  subsidyStatus String   @default("ACTIVE")
+  createdAt     DateTime @default(now())
+
+  bookings      GasBooking[]
+  complaints    GasComplaint[]
+  transfers     GasTransferRequest[]
+}
+
+model GasBooking {
+  id            String   @id @default(uuid())
+  consumerNumber String
+  bookingId     String   @unique
+  bookingDate   DateTime @default(now())
+  deliveryDate  DateTime?
+  cylinderType  String   @default("14.2KG")
+  quantity      Int      @default(1)
+  amount        Float
+  subsidyAmount Float?
+  netAmount     Float
+  status        String   @default("BOOKED")
+  paymentStatus String   @default("PENDING")
+  deliveredAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  account GasAccount @relation(fields: [consumerNumber], references: [consumerNumber])
+}
+
+model GasComplaint {
+  id            String   @id @default(uuid())
+  consumerNumber String
+  complaintId   String   @unique
+  complaintType String
+  subType       String
+  bookingId     String?
+  description   String?
+  status        String   @default("REGISTERED")
+  priority      String   @default("NORMAL")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  account GasAccount @relation(fields: [consumerNumber], references: [consumerNumber])
+}
+
+model GasTransferRequest {
+  id              String   @id @default(uuid())
+  consumerNumber  String
+  requestId       String   @unique
+  status          String   @default("REQUESTED")
+  newDistributorCode String
+  newDistributorName String?
+  documentSubmitted Boolean @default(false)
+  approvedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  account GasAccount @relation(fields: [consumerNumber], references: [consumerNumber])
+}
+
+// ============================================
+// MUNICIPAL CORPORATION
+// ============================================
+
+model PropertyAccount {
+  id              String   @id @default(uuid())
+  propertyId      String   @unique
+  ownerName       String
+  address         String
+  wardNumber      String
+  propertyType    String   @default("RESIDENTIAL")
+  builtUpArea     Float
+  annualValue     Float
+  createdAt       DateTime @default(now())
+
+  taxBills        PropertyTaxBill[]
+  complaints      CivicComplaint[]
+  certificates    CertificateRequest[]
+}
+
+model PropertyTaxBill {
+  id            String   @id @default(uuid())
+  propertyId    String
+  financialYear String
+  taxAmount     Float
+  rebateAmount  Float    @default(0)
+  penaltyAmount Float    @default(0)
+  totalAmount   Float
+  dueDate       DateTime
+  paidDate      DateTime?
+  status        String   @default("UNPAID")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  property PropertyAccount @relation(fields: [propertyId], references: [propertyId])
+
+  @@unique([propertyId, financialYear])
+}
+
+model CivicComplaint {
+  id            String   @id @default(uuid())
+  propertyId    String?
+  complaintId   String   @unique
+  complaintType String
+  location      String
+  description   String?
+  status        String   @default("REGISTERED")
+  priority      String   @default("NORMAL")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  property PropertyAccount? @relation(fields: [propertyId], references: [propertyId])
+}
+
+model CertificateRequest {
+  id            String   @id @default(uuid())
+  propertyId    String
+  requestId     String   @unique
+  certificateType String
+  applicantName String
+  applicationDate DateTime @default(now())
+  status        String   @default("PENDING")
+  approvedAt    DateTime?
+  documentUrl   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  property PropertyAccount @relation(fields: [propertyId], references: [propertyId])
+}
+
+// ============================================
+// TRANSPORT DEPARTMENT (RTO)
+// ============================================
+
+model VehicleAccount {
+  id            String   @id @default(uuid())
+  registrationNumber String @unique
+  ownerName     String
+  vehicleClass  String
+  fuelType      String
+  chassisNumber String
+  engineNumber  String
+  registrationDate DateTime
+  fitnessValidUpto DateTime?
+  insuranceValidUpto DateTime?
+  pucValidUpto  DateTime?
+  createdAt     DateTime @default(now())
+
+  challans      Challan[]
+  applications  RtoApplication[]
+}
+
+model Challan {
+  id                String   @id @default(uuid())
+  registrationNumber String
+  challanNumber     String   @unique
+  violationDate     DateTime
+  violationType     String
+  violationLocation String
+  fineAmount        Float
+  status            String   @default("UNPAID")
+  paidDate          DateTime?
+  paymentReference  String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  vehicle VehicleAccount @relation(fields: [registrationNumber], references: [registrationNumber])
+}
+
+model RtoApplication {
+  id                String   @id @default(uuid())
+  registrationNumber String?
+  applicationNumber String   @unique
+  applicantName     String
+  applicationType   String
+  applicationDate   DateTime @default(now())
+  status            String   @default("PENDING")
+  approvedAt        DateTime?
+  documentUrl       String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  vehicle VehicleAccount? @relation(fields: [registrationNumber], references: [registrationNumber])
+}
+
+// ============================================
+// PDS (RATION CARD)
+// ============================================
+
+model RationCardAccount {
+  id            String   @id @default(uuid())
+  cardNumber    String   @unique
+  cardType      String   @default("PHH")
+  headOfFamily  String
+  address       String
+  fpsCode       String
+  fpsName       String
+  totalMembers  Int      @default(4)
+  createdAt     DateTime @default(now())
+
+  transactions  RationTransaction[]
+  grievances    RationGrievance[]
+}
+
+model RationEntitlement {
+  id            String   @id @default(uuid())
+  cardType      String   @unique
+  riceKg        Float
+  wheatKg       Float
+  sugarKg       Float
+  keroseneL     Float
+  validFrom     DateTime
+  validUpto     DateTime
+  createdAt     DateTime @default(now())
+}
+
+model RationTransaction {
+  id            String   @id @default(uuid())
+  cardNumber    String
+  transactionId String   @unique
+  transactionDate DateTime @default(now())
+  riceTaken     Float    @default(0)
+  wheatTaken    Float    @default(0)
+  sugarTaken    Float    @default(0)
+  keroseneTaken Float    @default(0)
+  totalAmount   Float
+  fpsCode       String
+  createdAt     DateTime @default(now())
+
+  card RationCardAccount @relation(fields: [cardNumber], references: [cardNumber])
+}
+
+model RationGrievance {
+  id            String   @id @default(uuid())
+  cardNumber    String
+  grievanceId   String   @unique
+  grievanceType String
+  description   String?
+  status        String   @default("REGISTERED")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  card RationCardAccount @relation(fields: [cardNumber], references: [cardNumber])
+}
+
+// ============================================
+// AUDIT & SECURITY
+// ============================================
+
+model AuditLog {
+  id            String   @id @default(uuid())
+  userId        String?
+  phoneNumber   String?
+  action        String
+  department    String?
+  serviceKey    String?
+  ipAddress     String?
+  userAgent     String?
+  metadata      String?
+  createdAt     DateTime @default(now())
+}
+
+model RateLimit {
+  id            String   @id @default(uuid())
+  identifier    String   @unique
+  actionType    String
+  count         Int      @default(0)
+  lastAttempt   DateTime @default(now())
+  blockedUntil  DateTime?
+}
