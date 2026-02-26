@@ -1,7 +1,13 @@
 import { Injectable, BadRequestException } from "@nestjs/common"
 import { PrismaService } from "../prisma/prisma.service"
+import Redis from "ioredis"
 
-// Simple in-memory OTP store (use Redis in production)
+// Initialize Redis client
+const redis = process.env.REDIS_URL 
+  ? new Redis(process.env.REDIS_URL)
+  : null
+
+// Fallback in-memory store for development
 const otpStore = new Map<string, { otp: string; expires: number }>()
 
 @Injectable()
@@ -73,11 +79,19 @@ export class AccountsService {
 
     // Generate and store OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString()
-    const key = `${phoneNumber}:${department}:${accountNumber}`
-    otpStore.set(key, {
-      otp,
-      expires: Date.now() + 5 * 60 * 1000, // 5 minutes
-    })
+    const key = `otp:${phoneNumber}:${department}:${accountNumber}`
+    const expiresIn = 5 * 60 // 5 minutes in seconds
+    
+    if (redis) {
+      // Use Redis in production
+      await redis.setex(key, expiresIn, otp)
+    } else {
+      // Fallback to in-memory store
+      otpStore.set(key, {
+        otp,
+        expires: Date.now() + expiresIn * 1000,
+      })
+    }
 
     // In production, send OTP via SMS
     console.log(`OTP for ${key}: ${otp}`)
@@ -94,19 +108,30 @@ export class AccountsService {
     accountNumber: string,
     otp: string
   ) {
-    const key = `${phoneNumber}:${department}:${accountNumber}`
-    const stored = otpStore.get(key)
+    const key = `otp:${phoneNumber}:${department}:${accountNumber}`
+    
+    let storedOtp: string | null = null
+    
+    if (redis) {
+      // Use Redis in production
+      storedOtp = await redis.get(key)
+    } else {
+      // Fallback to in-memory store
+      const stored = otpStore.get(key)
+      if (stored) {
+        if (stored.expires < Date.now()) {
+          otpStore.delete(key)
+          throw new BadRequestException("OTP expired")
+        }
+        storedOtp = stored.otp
+      }
+    }
 
-    if (!stored) {
+    if (!storedOtp) {
       throw new BadRequestException("OTP expired or not requested")
     }
 
-    if (stored.expires < Date.now()) {
-      otpStore.delete(key)
-      throw new BadRequestException("OTP expired")
-    }
-
-    if (stored.otp !== otp) {
+    if (storedOtp !== otp) {
       throw new BadRequestException("Invalid OTP")
     }
 
@@ -120,7 +145,11 @@ export class AccountsService {
     })
 
     // Clean up OTP
-    otpStore.delete(key)
+    if (redis) {
+      await redis.del(key)
+    } else {
+      otpStore.delete(key)
+    }
 
     return {
       message: "Account linked successfully",
