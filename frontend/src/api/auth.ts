@@ -2,8 +2,9 @@ import { API_BASE } from "./config"
 
 export async function sendOtp(phone: string) {
   try {
-    console.log("Sending OTP to:", phone)
-    const res = await fetch(`${API_BASE}/auth/send-otp`, {
+    console.log("Sending OTP to:", phone, "API Base:", import.meta.env.VITE_API_BASE_URL || "http://localhost:3000")
+    
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:3000"}/auth/send-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ phone }),
@@ -14,8 +15,9 @@ export async function sendOtp(phone: string) {
     console.log("OTP send response status:", res.status)
     
     if (!res.ok) {
-      console.error("OTP send failed:", res.statusText)
-      throw new Error(`Failed to send OTP: ${res.statusText}`)
+      const errorText = await res.text()
+      console.error("OTP send failed:", res.statusText, errorText)
+      throw new Error(`Failed to send OTP: ${res.statusText} - ${errorText}`)
     }
 
     const data = await res.json()
@@ -29,15 +31,33 @@ export async function sendOtp(phone: string) {
 }
 
 export async function verifyOtp(phone: string, otp: string) {
-  const res = await fetch(`${API_BASE}/auth/verify-otp`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ phone, otp }),
-    credentials: "include",
-    cache: "no-store",
-  })
+  try {
+    console.log('Attempting OTP verification:', { phone, otp, apiBase: import.meta.env.VITE_API_BASE_URL })
+    
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:3000"}/auth/verify-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, otp }),
+      credentials: "include",
+      cache: "no-store",
+    })
 
-  return res.json()
+    console.log('OTP verification response status:', res.status)
+    console.log('OTP verification response headers:', res.headers)
+
+    if (!res.ok) {
+      const errorText = await res.text()
+      console.error('OTP verification failed:', res.status, errorText)
+      throw new Error(`HTTP ${res.status}: ${errorText}`)
+    }
+
+    const data = await res.json()
+    console.log('OTP verification response data:', data)
+    return data
+  } catch (error) {
+    console.error('OTP verification error:', error)
+    throw error
+  }
 }
 
 export async function getMe() {
