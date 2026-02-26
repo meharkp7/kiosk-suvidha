@@ -3,7 +3,7 @@ services:
     name: kiosk-suvidha-backend
     env: node
     plan: free
-    buildCommand: npm install && npx prisma generate && npm run build
+    buildCommand: NODE_OPTIONS="--max-old-space-size=4096" npm install && npx prisma generate && npm run build
     startCommand: node dist/main
     envVars:
       - key: NODE_ENV
