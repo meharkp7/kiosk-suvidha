@@ -62,74 +62,74 @@ export default function KioskLayout({
         <header
           className={`${
             highContrast ? "bg-black border-white" : "bg-white border-slate-200"
-          } border-b shadow-sm px-6 py-4`}
+          } border-b shadow-sm px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4`}
         >
-          <div className="max-w-7xl mx-auto grid grid-cols-3 items-center">
+          <div className="max-w-7xl mx-auto grid grid-cols-3 items-center gap-2">
             {/* Left: Back & Home */}
-            <div className="flex items-center gap-3 justify-start">
+            <div className="flex items-center gap-1 sm:gap-2 lg:gap-3 justify-start">
               {onBack && (
                 <button
                   onClick={onBack}
-                  className={`flex items-center gap-2 px-5 py-3 rounded-xl font-medium transition-all active:scale-95 ${
+                  className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-5 py-2 sm:py-3 rounded-xl font-medium transition-all active:scale-95 ${
                     highContrast
                       ? "bg-white text-black hover:bg-gray-200"
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                   }`}
                 >
-                  <span className="text-xl">←</span>
-                  <span className="hidden sm:inline">Back</span>
+                  <span className="text-lg sm:text-xl">←</span>
+                  <span className="hidden xs:inline sm:text-base lg:text-base">Back</span>
                 </button>
               )}
               {onHome && (
                 <button
                   onClick={onHome}
-                  className={`flex items-center gap-2 px-5 py-3 rounded-xl font-medium transition-all active:scale-95 ${
+                  className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-5 py-2 sm:py-3 rounded-xl font-medium transition-all active:scale-95 ${
                     highContrast
                       ? "bg-blue-600 text-white hover:bg-blue-500"
                       : "bg-blue-800 text-white hover:bg-blue-700"
                   }`}
                 >
-                  <span className="text-xl">🏠</span>
-                  <span className="hidden sm:inline">Home</span>
+                  <span className="text-lg sm:text-xl">🏠</span>
+                  <span className="hidden xs:inline sm:text-base lg:text-base">Home</span>
                 </button>
               )}
             </div>
 
             {/* Center: Title */}
-            <div className="text-center">
+            <div className="text-center flex-1 px-2">
               <h1
-                className={`text-2xl sm:text-3xl font-bold ${
+                className={`text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold truncate ${
                   highContrast ? "text-white" : "text-slate-900"
                 }`}
               >
                 {title}
               </h1>
               {subtitle && (
-                <p className={`text-sm mt-1 ${highContrast ? "text-gray-300" : "text-slate-500"}`}>
+                <p className={`text-xs sm:text-sm mt-1 truncate ${highContrast ? "text-gray-300" : "text-slate-500"}`}>
                   {subtitle}
                 </p>
               )}
             </div>
 
             {/* Right: Accessibility & Session */}
-            <div className="flex items-center gap-3 justify-end">
+            <div className="flex items-center gap-1 sm:gap-2 lg:gap-3 justify-end">
               {/* Font Size Toggle */}
               <div className="hidden md:flex items-center gap-1 bg-slate-100 rounded-lg p-1">
                 <button
                   onClick={() => setFontSize("normal")}
-                  className={`px-3 py-1 rounded ${fontSize === "normal" ? "bg-white shadow" : ""}`}
+                  className={`px-2 py-1 rounded text-sm ${fontSize === "normal" ? "bg-white shadow" : ""}`}
                 >
                   A
                 </button>
                 <button
                   onClick={() => setFontSize("large")}
-                  className={`px-3 py-1 rounded ${fontSize === "large" ? "bg-white shadow" : ""}`}
+                  className={`px-2 py-1 rounded text-sm ${fontSize === "large" ? "bg-white shadow" : ""}`}
                 >
                   A+
                 </button>
                 <button
                   onClick={() => setFontSize("xlarge")}
-                  className={`px-3 py-1 rounded ${fontSize === "xlarge" ? "bg-white shadow" : ""}`}
+                  className={`px-2 py-1 rounded text-sm ${fontSize === "xlarge" ? "bg-white shadow" : ""}`}
                 >
                   A++
                 </button>
@@ -138,19 +138,19 @@ export default function KioskLayout({
               {/* High Contrast Toggle */}
               <button
                 onClick={() => setHighContrast(!highContrast)}
-                className={`p-3 rounded-xl transition-all ${
+                className={`p-2 sm:p-3 rounded-xl transition-all ${
                   highContrast
                     ? "bg-yellow-400 text-black"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
                 title="Toggle High Contrast"
               >
-                <span className="text-xl">👁️</span>
+                <span className="text-lg sm:text-xl">👁️</span>
               </button>
 
               {/* Session Timer */}
               <div
-                className={`px-4 py-3 rounded-xl font-mono font-medium ${
+                className={`px-2 sm:px-3 lg:px-4 py-2 sm:py-3 rounded-xl font-mono font-medium text-xs sm:text-sm ${
                   sessionTime < 60
                     ? "bg-red-100 text-red-700"
                     : highContrast
@@ -158,15 +158,18 @@ export default function KioskLayout({
                     : "bg-slate-100 text-slate-700"
                 }`}
               >
-                ⏱️ {formatTime(sessionTime)}
+                <span className="hidden sm:inline">⏱️</span>
+                <span className="sm:hidden">⏰</span>
+                {formatTime(sessionTime)}
               </div>
 
               {/* End Session */}
               <button
                 onClick={() => navigate("/login")}
-                className="bg-red-600 text-white px-5 py-3 rounded-xl font-medium hover:bg-red-700 transition-all active:scale-95"
+                className="bg-red-600 text-white px-2 sm:px-3 lg:px-5 py-2 sm:py-3 rounded-xl font-medium hover:bg-red-700 transition-all active:scale-95 text-xs sm:text-sm"
               >
-                End
+                <span className="hidden sm:inline">End Session</span>
+                <span className="sm:hidden">End</span>
               </button>
             </div>
           </div>
@@ -175,33 +178,35 @@ export default function KioskLayout({
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
-        <div className="max-w-7xl mx-auto p-6">{children}</div>
+        <div className="max-w-7xl mx-auto p-3 sm:p-4 lg:p-6 xl:p-8">{children}</div>
       </main>
 
       {/* Footer Help Bar */}
       <footer
         className={`${
           highContrast ? "bg-black border-white" : "bg-white border-slate-200"
-        } border-t px-6 py-3`}
+        } border-t px-3 sm:px-4 lg:px-6 py-2 sm:py-3`}
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <span className="flex items-center gap-2 text-sm">
-              <span className="text-xl">📞</span>
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
+          <div className="flex items-center gap-3 sm:gap-4 lg:gap-6">
+            <span className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <span className="text-base sm:text-xl">📞</span>
               <span className={highContrast ? "text-gray-300" : "text-slate-600"}>
-                Helpline: 1800-XXX-XXXX
+                <span className="hidden sm:inline">Helpline: </span>1800-XXX-XXXX
               </span>
             </span>
-            <span className="flex items-center gap-2 text-sm">
-              <span className="text-xl">♿</span>
+            <span className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <span className="text-base sm:text-xl">♿</span>
               <span className={highContrast ? "text-gray-300" : "text-slate-600"}>
-                Accessible Kiosk
+                <span className="hidden sm:inline">Accessible </span>Kiosk
               </span>
             </span>
           </div>
-          <div className="text-sm">
+          <div className="text-xs sm:text-sm">
             <span className={highContrast ? "text-gray-400" : "text-slate-400"}>
-              Government of India | Secure & Verified
+              <span className="hidden sm:inline">Government of India | </span>
+              <span className="sm:hidden">GoI | </span>
+              Secure & Verified
             </span>
           </div>
         </div>

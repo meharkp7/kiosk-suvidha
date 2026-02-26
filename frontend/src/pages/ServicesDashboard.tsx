@@ -316,36 +316,39 @@ export default function ServicesDashboard() {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Session Timer Header */}
-        <div className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <span className="font-semibold text-slate-700">{t("suvidhaKiosk")}</span>
-            <span className="text-slate-400">|</span>
-            <span className="text-slate-500">{t("servicesDashboard")}</span>
+        <div className="bg-white border-b border-slate-200 px-3 sm:px-4 lg:px-6 py-2 sm:py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <span className="font-semibold text-slate-700 text-sm sm:text-base">{t("suvidhaKiosk")}</span>
+            <span className="text-slate-400 hidden sm:inline">|</span>
+            <span className="text-slate-500 text-xs sm:text-sm">{t("servicesDashboard")}</span>
           </div>
-          <div className="flex items-center gap-4">
-            <div className={`px-4 py-2 rounded-lg font-mono font-medium ${
+          <div className="flex items-center gap-2 sm:gap-4">
+            <div className={`px-2 sm:px-3 lg:px-4 py-1 sm:py-2 rounded-lg font-mono font-medium text-xs sm:text-sm ${
               sessionTime < 60 ? "bg-red-100 text-red-700" : "bg-slate-100 text-slate-700"
             }`}>
-              ⏱️ {formatTime(sessionTime)}
+              <span className="hidden sm:inline">⏱️</span>
+              <span className="sm:hidden">⏰</span>
+              {formatTime(sessionTime)}
             </div>
             <button
               onClick={() => navigate("/login")}
-              className="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700"
+              className="bg-red-600 text-white px-2 sm:px-3 lg:px-4 py-1 sm:py-2 rounded-lg font-medium hover:bg-red-700 text-xs sm:text-sm"
             >
-              {t("endSession")}
+              <span className="hidden sm:inline">{t("endSession")}</span>
+              <span className="sm:hidden">End</span>
             </button>
           </div>
         </div>
 
         <div className="flex-1 overflow-auto">
-          <div className="max-w-6xl mx-auto p-6">
+          <div className="max-w-6xl mx-auto p-3 sm:p-4 lg:p-6">
           {activeDept && linkedDepts.includes(activeDept) ? (
             <>
-              <div className="mb-8">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-4xl">{departmentIcons[activeDept]}</span>
+              <div className="mb-6 sm:mb-8">
+                <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                  <span className="text-2xl sm:text-3xl lg:text-4xl">{departmentIcons[activeDept]}</span>
                   <div>
-                    <h1 className="text-3xl font-bold capitalize text-gray-900">
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold capitalize text-gray-900">
                       {t(`${activeDept}Dept`)}
                     </h1>
                     <p className="text-gray-500">
@@ -359,20 +362,20 @@ export default function ServicesDashboard() {
               </div>
 
               {loading ? (
-                <div className="flex items-center justify-center h-64">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <div className="flex items-center justify-center h-32 sm:h-48 lg:h-64">
+                  <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-b-2 border-blue-600"></div>
                 </div>
               ) : services.length === 0 ? (
-                <div className="text-center py-16 bg-white rounded-xl shadow-sm">
-                  <p className="text-gray-500">{t("noServicesAvailable")}</p>
+                <div className="text-center py-8 sm:py-12 lg:py-16 bg-white rounded-xl shadow-sm">
+                  <p className="text-gray-500 text-sm sm:text-base">{t("noServicesAvailable")}</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
                   {services.map((service, index) => (
                     <button
                       key={service.key}
                       onClick={() => handleNavigate(service.key)}
-                      className="group relative overflow-hidden bg-white rounded-xl p-6 text-left transition-all duration-300 hover:shadow-lg hover:scale-[1.02] border border-gray-200"
+                      className="group relative overflow-hidden bg-white rounded-xl p-4 sm:p-6 text-left transition-all duration-300 hover:shadow-lg hover:scale-[1.02] border border-gray-200"
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
                       <div
@@ -380,18 +383,18 @@ export default function ServicesDashboard() {
                       />
 
                       <div className="relative z-10">
-                        <div className="flex items-start justify-between mb-4">
-                          <span className="text-3xl bg-gray-100 rounded-lg p-2">
+                        <div className="flex items-start justify-between mb-3 sm:mb-4">
+                          <span className="text-2xl sm:text-3xl bg-gray-100 rounded-lg p-2">
                             {service.icon}
                           </span>
-                          <span className="text-gray-400 group-hover:text-gray-600">→</span>
+                          <span className="text-gray-400 group-hover:text-gray-600 text-sm sm:text-base">→</span>
                         </div>
 
-                        <h3 className="font-semibold text-lg text-gray-900 mb-2">
+                        <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 mb-2 line-clamp-2">
                           {service.label}
                         </h3>
 
-                        <p className="text-sm text-gray-500 line-clamp-2">
+                        <p className="text-xs sm:text-sm text-gray-500 line-clamp-2">
                           {service.description}
                         </p>
                       </div>
@@ -404,31 +407,31 @@ export default function ServicesDashboard() {
                 </div>
               )}
 
-              <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-blue-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-blue-900 mb-1">💡 {t("tip")}</h4>
-                  <p className="text-sm text-blue-700">
+              <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                <div className="bg-blue-50 rounded-lg p-3 sm:p-4">
+                  <h4 className="font-semibold text-blue-900 mb-1 text-sm sm:text-base">💡 {t("tip")}</h4>
+                  <p className="text-xs sm:text-sm text-blue-700">
                     {t("useSidebarToSwitch")}
                   </p>
                 </div>
-                <div className="bg-green-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-green-900 mb-1">✅ {t("verified")}</h4>
-                  <p className="text-sm text-green-700">{t("secureTransactions")}</p>
+                <div className="bg-green-50 rounded-lg p-3 sm:p-4">
+                  <h4 className="font-semibold text-green-900 mb-1 text-sm sm:text-base">✅ {t("verified")}</h4>
+                  <p className="text-xs sm:text-sm text-green-700">{t("secureTransactions")}</p>
                 </div>
-                <div className="bg-purple-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-purple-900 mb-1">📞 {t("support")}</h4>
-                  <p className="text-sm text-purple-700">{t("helplineAvailable")}</p>
+                <div className="bg-purple-50 rounded-lg p-3 sm:p-4">
+                  <h4 className="font-semibold text-purple-900 mb-1 text-sm sm:text-base">📞 {t("support")}</h4>
+                  <p className="text-xs sm:text-sm text-purple-700">{t("helplineAvailable")}</p>
                 </div>
               </div>
             </>
           ) : (
             <div className="flex items-center justify-center h-full">
-              <div className="text-center bg-white rounded-2xl shadow-lg p-12 max-w-md">
-                <span className="text-6xl mb-4 block">👋</span>
-                <h2 className="text-2xl font-bold text-slate-800 mb-2">
+              <div className="text-center bg-white rounded-2xl shadow-lg p-6 sm:p-8 lg:p-12 max-w-sm sm:max-w-md">
+                <span className="text-4xl sm:text-6xl mb-4 block">👋</span>
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-2">
                   {t("welcomeToSuvidha")}
                 </h2>
-                <p className="text-slate-500 mb-6">
+                <p className="text-slate-500 mb-6 text-sm sm:text-base">
                   {t("linkedDepartmentsCount", { count: linkedDepts.length })}
                   {linkedDepts.length === 0 && (
                     <span className="block mt-2 text-amber-600">
@@ -437,7 +440,7 @@ export default function ServicesDashboard() {
                   )}
                 </p>
                 {linkedDepts.length > 0 && (
-                  <p className="text-slate-600">
+                  <p className="text-slate-600 text-sm sm:text-base">
                     {t("selectDeptFromSidebar")}
                   </p>
                 )}

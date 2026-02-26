@@ -38,15 +38,15 @@ export default function Sidebar({
     <>
       <div
         className={`${
-          collapsed ? "w-20" : "w-72"
-        } h-screen bg-slate-900 text-white flex flex-col transition-all duration-300 flex-shrink-0`}
+          collapsed ? "w-16 sm:w-20" : "w-56 sm:w-64 lg:w-72"
+        } h-screen bg-slate-900 text-white flex flex-col transition-all duration-300 flex-shrink-0 relative z-20`}
       >
         {/* Logo Area */}
-        <div className="p-4 border-b border-slate-700 flex items-center justify-between">
+        <div className="p-3 sm:p-4 border-b border-slate-700 flex items-center justify-between">
           {!collapsed && (
             <div>
-              <h1 className="font-bold text-lg">SUVIDHA</h1>
-              <p className="text-xs text-slate-400">e-Governance</p>
+              <h1 className="font-bold text-base sm:text-lg">SUVIDHA</h1>
+              <p className="text-xs text-slate-400 hidden sm:inline">e-Governance</p>
             </div>
           )}
           <button
@@ -58,44 +58,44 @@ export default function Sidebar({
         </div>
 
         {/* Department Navigation */}
-        <nav className="flex-1 py-4 overflow-y-auto">
+        <nav className="flex-1 py-2 sm:py-4 overflow-y-auto">
           {allDepartments.map((dept) => {
             const isLinked = linkedDepts.includes(dept.id)
             const isActive = activeDept === dept.id
 
             return (
-              <div key={dept.id} className="px-3 mb-2">
+              <div key={dept.id} className="px-2 sm:px-3 mb-1 sm:mb-2">
                 {isLinked ? (
                   <button
                     onClick={() => onDeptChange(dept.id)}
-                    className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all hover:bg-slate-800 ${
-                      isActive ? "bg-slate-800 border-r-4" : ""
+                    className={`w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl transition-all hover:bg-slate-800 ${
+                      isActive ? "bg-slate-800 border-r-2 sm:border-r-4" : ""
                     }`}
                     style={{
                       borderRightColor: isActive ? dept.color : "transparent",
                     }}
                   >
-                    <span className="text-2xl">{dept.icon}</span>
+                    <span className="text-xl sm:text-2xl">{dept.icon}</span>
                     {!collapsed && (
                       <div className="text-left flex-1">
-                        <p className="font-medium text-sm">{dept.name}</p>
-                        <p className="text-xs text-green-400">Linked ✓</p>
+                        <p className="font-medium text-xs sm:text-sm">{dept.name}</p>
+                        <p className="text-xs text-green-400 hidden sm:inline">Linked ✓</p>
                       </div>
                     )}
                     {isActive && !collapsed && (
-                      <span className="text-xs text-slate-400">●</span>
+                      <span className="text-xs text-slate-400 hidden sm:inline">●</span>
                     )}
                   </button>
                 ) : (
                   <button
                     onClick={() => setLinkingDept(dept.id)}
-                    className="w-full flex items-center gap-3 p-3 rounded-xl transition-all hover:bg-slate-800 opacity-60"
+                    className="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl transition-all hover:bg-slate-800 opacity-60"
                   >
-                    <span className="text-2xl opacity-50">{dept.icon}</span>
+                    <span className="text-xl sm:text-2xl opacity-50">{dept.icon}</span>
                     {!collapsed && (
                       <div className="text-left flex-1">
-                        <p className="font-medium text-sm text-slate-400">{dept.name}</p>
-                        <p className="text-xs text-amber-400">Click to Link +</p>
+                        <p className="font-medium text-xs sm:text-sm text-slate-400">{dept.name}</p>
+                        <p className="text-xs text-amber-400 hidden sm:inline">Click to Link +</p>
                       </div>
                     )}
                   </button>
@@ -106,11 +106,12 @@ export default function Sidebar({
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-700">
+        <div className="p-3 sm:p-4 border-t border-slate-700">
           {!collapsed && (
             <div className="text-xs text-slate-400">
               <p className="font-semibold mb-1">Linked: {linkedDepts.length}/6</p>
-              <p>Link accounts to access services</p>
+              <p className="hidden sm:inline">Link accounts to access services</p>
+              <p className="sm:hidden">Link accounts</p>
             </div>
           )}
         </div>
