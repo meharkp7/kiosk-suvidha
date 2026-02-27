@@ -11,9 +11,9 @@
     "preview": "vite preview",
     "electron:dev": "electron .",
     "electron:build": "vite build && electron-builder",
-    "electron:build:mac": "vite build && electron-builder --mac",
-    "electron:build:win": "vite build && electron-builder --win",
-    "electron:build:linux": "vite build && electron-builder --linux"
+    "electron:build:mac": "vite build && electron-builder --mac --publish=never",
+    "electron:build:win": "vite build && electron-builder --win --publish=never",
+    "electron:build:linux": "vite build && electron-builder --linux AppImage --publish=never"
   },
   "dependencies": {
     "html2canvas": "^1.4.1",
