@@ -1,13 +1,14 @@
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import LinkAccountModal from "./LinkAccountModal"
 
 const allDepartments = [
-  { id: "electricity", name: "Electricity", icon: "⚡", color: "#fbbf24" },
-  { id: "water", name: "Water", icon: "💧", color: "#3b82f6" },
-  { id: "gas", name: "Gas", icon: "🔥", color: "#f97316" },
-  { id: "municipal", name: "Municipal", icon: "🏛️", color: "#10b981" },
-  { id: "transport", name: "Transport", icon: "🚗", color: "#6366f1" },
-  { id: "pds", name: "Ration", icon: "🍚", color: "#8b5cf6" },
+  { id: "electricity", nameKey: "electricity", icon: "⚡", color: "#fbbf24" },
+  { id: "water", nameKey: "water", icon: "💧", color: "#3b82f6" },
+  { id: "gas", nameKey: "gas", icon: "🔥", color: "#f97316" },
+  { id: "municipal", nameKey: "municipal", icon: "🏛️", color: "#10b981" },
+  { id: "transport", nameKey: "transport", icon: "🚗", color: "#6366f1" },
+  { id: "pds", nameKey: "ration", icon: "🍚", color: "#8b5cf6" },
 ]
 
 interface SidebarProps {
@@ -23,6 +24,7 @@ export default function Sidebar({
   onDeptChange,
   onAccountLinked,
 }: SidebarProps) {
+  const { t } = useTranslation()
   const [collapsed, setCollapsed] = useState(false)
   const [linkingDept, setLinkingDept] = useState<string | null>(null)
 
@@ -78,8 +80,8 @@ export default function Sidebar({
                     <span className="text-xl sm:text-2xl">{dept.icon}</span>
                     {!collapsed && (
                       <div className="text-left flex-1">
-                        <p className="font-medium text-xs sm:text-sm">{dept.name}</p>
-                        <p className="text-xs text-green-400 hidden sm:inline">Linked ✓</p>
+                        <p className="font-medium text-xs sm:text-sm">{t(dept.nameKey)}</p>
+                        <p className="text-xs text-green-400 hidden sm:inline">{t("linked")} ✓</p>
                       </div>
                     )}
                     {isActive && !collapsed && (
@@ -94,8 +96,8 @@ export default function Sidebar({
                     <span className="text-xl sm:text-2xl opacity-50">{dept.icon}</span>
                     {!collapsed && (
                       <div className="text-left flex-1">
-                        <p className="font-medium text-xs sm:text-sm text-slate-400">{dept.name}</p>
-                        <p className="text-xs text-amber-400 hidden sm:inline">Click to Link +</p>
+                        <p className="font-medium text-xs sm:text-sm text-slate-400">{t(dept.nameKey)}</p>
+                        <p className="text-xs text-amber-400 hidden sm:inline">{t("clickToLink")} +</p>
                       </div>
                     )}
                   </button>
@@ -109,9 +111,9 @@ export default function Sidebar({
         <div className="p-3 sm:p-4 border-t border-slate-700">
           {!collapsed && (
             <div className="text-xs text-slate-400">
-              <p className="font-semibold mb-1">Linked: {linkedDepts.length}/6</p>
-              <p className="hidden sm:inline">Link accounts to access services</p>
-              <p className="sm:hidden">Link accounts</p>
+              <p className="font-semibold mb-1">{t("linked")}: {linkedDepts.length}/6</p>
+              <p className="hidden sm:inline">{t("linkAccountsToAccess")}</p>
+              <p className="sm:hidden">{t("linkAccounts")}</p>
             </div>
           )}
         </div>
@@ -121,7 +123,7 @@ export default function Sidebar({
       {linkingDept && linkingDeptInfo && (
         <LinkAccountModal
           department={linkingDept}
-          departmentName={linkingDeptInfo.name}
+          departmentName={t(linkingDeptInfo.nameKey)}
           icon={linkingDeptInfo.icon}
           onClose={() => setLinkingDept(null)}
           onSuccess={(accountNumber) =>

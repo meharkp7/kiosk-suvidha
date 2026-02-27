@@ -167,7 +167,7 @@ export default function Dashboard() {
                   {/* Info */}
                   <div>
                     <p className="font-bold text-lg text-slate-800 capitalize">
-                      {acc.department}
+                      {t(dept)}
                     </p>
                     <p className="text-sm text-slate-500">
                       {acc.accountNumber}
