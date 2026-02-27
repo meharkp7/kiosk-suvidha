@@ -143,7 +143,19 @@ export default function PayChallan() {
         const verifyData = await verifyResponse.json()
 
         if (verifyData.success) {
-          navigate('/transport/challan-history', { state: { accountNumber } })
+          navigate('/receipt', { 
+            state: { 
+              amount: challan.fineAmount,
+              reference: demoPaymentId,
+              department: 'transport',
+              accountNumber,
+              consumerName: '',
+              billMonth: challan.challanNumber,
+              paymentDate: new Date().toLocaleString('en-IN'),
+              paymentMethod: 'Demo/UPI',
+              transactionId: demoPaymentId
+            } 
+          })
         } else {
           alert('Payment verification failed. Please contact support.')
           setLoading(false)
@@ -175,7 +187,19 @@ export default function PayChallan() {
           const verifyData = await verifyResponse.json()
 
           if (verifyData.success) {
-            navigate('/transport/challan-history', { state: { accountNumber } })
+            navigate('/receipt', { 
+              state: { 
+                amount: challan.fineAmount,
+                reference: response.razorpay_payment_id,
+                department: 'transport',
+                accountNumber,
+                consumerName: '',
+                billMonth: challan.challanNumber,
+                paymentDate: new Date().toLocaleString('en-IN'),
+                paymentMethod: 'UPI/Card/NetBanking',
+                transactionId: response.razorpay_payment_id
+              } 
+            })
           } else {
             alert('Payment verification failed. Please contact support.')
           }

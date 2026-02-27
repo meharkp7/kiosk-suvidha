@@ -59,6 +59,9 @@ model ElectricityAccount {
   complaints    ElectricityComplaint[]
   payments      ElectricityPayment[]
   transfers     ElectricityTransferRequest[]
+  nameChanges   ElectricityNameChangeRequest[]
+  loadChanges   ElectricityLoadChangeRequest[]
+  billingIssues ElectricityBillingIssue[]
 }
 
 model ElectricityBill {
@@ -138,6 +141,65 @@ model ElectricityTransferRequest {
   account ElectricityAccount @relation(fields: [accountNumber], references: [accountNumber])
 }
 
+model ElectricityNameChangeRequest {
+  id                  String   @id @default(uuid())
+  accountNumber       String
+  requestId           String   @unique
+  oldName             String
+  newName             String
+  reason              String
+  status              String   @default("SUBMITTED")
+  estimatedCompletion DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  account ElectricityAccount @relation(fields: [accountNumber], references: [accountNumber])
+}
+
+model ElectricityLoadChangeRequest {
+  id                  String   @id @default(uuid())
+  accountNumber       String
+  requestId           String   @unique
+  oldLoad             Float
+  newLoad             Float
+  reason              String
+  status              String   @default("SUBMITTED")
+  estimatedCompletion DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  account ElectricityAccount @relation(fields: [accountNumber], references: [accountNumber])
+}
+
+model ElectricityNewConnectionRequest {
+  id                  String   @id @default(uuid())
+  requestId           String   @unique
+  applicantName       String
+  mobileNumber        String
+  email               String?
+  address             String
+  propertyType        String
+  loadRequired        Float
+  status              String   @default("SUBMITTED")
+  estimatedCompletion DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model ElectricityBillingIssue {
+  id                  String   @id @default(uuid())
+  accountNumber       String
+  requestId           String   @unique
+  issueType           String
+  description         String
+  status              String   @default("SUBMITTED")
+  estimatedResolution DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  account ElectricityAccount @relation(fields: [accountNumber], references: [accountNumber])
+}
+
 // ============================================
 // WATER SUPPLY BOARD
 // ============================================
@@ -156,6 +218,9 @@ model WaterAccount {
   complaints    WaterComplaint[]
   payments      WaterPayment[]
   transfers     WaterTransferRequest[]
+  meterReadings WaterMeterReading[]
+  nameChanges   WaterNameChangeRequest[]
+  sewerageRequests WaterSewerageRequest[]
 }
 
 model WaterBill {
@@ -216,6 +281,21 @@ model WaterComplaint {
   account WaterAccount @relation(fields: [accountNumber], references: [accountNumber])
 }
 
+model WaterMeterReading {
+  id            String   @id @default(uuid())
+  accountNumber String
+  reading       Float
+  readingId     String   @unique
+  photoUrl      String?
+  status        String   @default("SUBMITTED")
+  submittedAt   DateTime @default(now())
+  verifiedAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  account WaterAccount @relation(fields: [accountNumber], references: [accountNumber])
+}
+
 model WaterTransferRequest {
   id                  String   @id @default(uuid())
   accountNumber       String
@@ -226,6 +306,50 @@ model WaterTransferRequest {
   approvedBy          String?
   approvedAt          DateTime?
   rejectionReason     String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  account WaterAccount @relation(fields: [accountNumber], references: [accountNumber])
+}
+
+model WaterNameChangeRequest {
+  id                  String   @id @default(uuid())
+  accountNumber       String
+  requestId           String   @unique
+  oldName             String
+  newName             String
+  reason              String
+  status              String   @default("SUBMITTED")
+  estimatedCompletion DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  account WaterAccount @relation(fields: [accountNumber], references: [accountNumber])
+}
+
+model WaterNewConnectionRequest {
+  id                  String   @id @default(uuid())
+  requestId           String   @unique
+  applicantName       String
+  mobileNumber        String
+  email               String?
+  address             String
+  propertyType        String
+  connectionType    String
+  status              String   @default("SUBMITTED")
+  estimatedCompletion DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model WaterSewerageRequest {
+  id                  String   @id @default(uuid())
+  accountNumber       String
+  requestId           String   @unique
+  requestType         String
+  description         String
+  status              String   @default("SUBMITTED")
+  estimatedCompletion DateTime?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
@@ -301,6 +425,32 @@ model GasTransferRequest {
   updatedAt       DateTime @updatedAt
 
   account GasAccount @relation(fields: [consumerNumber], references: [consumerNumber])
+}
+
+model GasNewConnectionRequest {
+  id                  String   @id @default(uuid())
+  requestId           String   @unique
+  applicantName       String
+  mobileNumber        String
+  email               String?
+  address             String
+  connectionType      String
+  distributorCode     String?
+  status              String   @default("SUBMITTED")
+  estimatedCompletion DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model GasSurrenderRequest {
+  id                  String   @id @default(uuid())
+  requestId           String   @unique
+  consumerNumber      String
+  reason              String
+  status              String   @default("SUBMITTED")
+  estimatedCompletion DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }
 
 // ============================================

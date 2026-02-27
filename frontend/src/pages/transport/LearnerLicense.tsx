@@ -3,10 +3,12 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
+import { API_BASE } from "../../api/config"
 
 export default function LearnerLicense() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const accountNumber = useAccountNumber("transport")
   const [formData, setFormData] = useState({
     name: "",
     dob: "",
@@ -18,14 +20,42 @@ export default function LearnerLicense() {
   })
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [applicationNumber, setApplicationNumber] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!formData.name || !formData.dob || !formData.mobile) {
+      alert("Please fill all required fields")
+      return
+    }
     setLoading(true)
-    setTimeout(() => {
+    
+    try {
+      const res = await fetch(`${API_BASE}/transport/application`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          registrationNumber: accountNumber,
+          applicationType: "LEARNER_LICENSE",
+          applicantName: formData.name,
+          details: formData
+        })
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to submit application')
+      }
+
+      const data = await res.json()
+      setApplicationNumber(data.applicationNumber)
       setSubmitted(true)
+    } catch (error) {
+      console.error("Error:", error)
+      alert("Failed to submit application. Please try again.")
+    } finally {
       setLoading(false)
-    }, 2000)
+    }
   }
 
   if (submitted) {
@@ -35,7 +65,7 @@ export default function LearnerLicense() {
           <div className="bg-green-50 rounded-xl p-8">
             <div className="text-6xl mb-4">🎓</div>
             <h2 className="text-2xl font-bold text-green-800">Application Submitted!</h2>
-            <p className="text-green-600 mt-2">LL Test scheduled. Check SMS for details.</p>
+            <p className="text-green-600 mt-2">Application Number: {applicationNumber}</p>
             <button onClick={() => navigate("/services-dashboard")} className="mt-6 bg-green-600 text-white px-6 py-3 rounded-lg">Back to Services</button>
           </div>
         </div>

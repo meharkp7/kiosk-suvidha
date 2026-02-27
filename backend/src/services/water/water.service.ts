@@ -1,6 +1,9 @@
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common"
 import { PrismaClient } from "@prisma/client"
 
+// Temporary in-memory store for meter readings (until DB migration)
+const tempMeterReadings: any[] = []
+
 @Injectable()
 export class WaterService {
   private prisma = new PrismaClient()
@@ -138,6 +141,37 @@ export class WaterService {
     }
   }
 
+  async submitMeterReading(accountNumber: string, reading: number, photoUrl?: string) {
+    const account = await this.prisma.waterAccount.findUnique({
+      where: { accountNumber },
+    })
+
+    if (!account) {
+      throw new NotFoundException("Water account not found")
+    }
+
+    const readingId = `WMR-${Date.now().toString(36).toUpperCase().slice(-6)}`
+
+    // Store in temporary memory (replace with DB after migration)
+    const meterReading = {
+      id: readingId,
+      accountNumber,
+      reading,
+      readingId,
+      photoUrl: photoUrl || null,
+      status: "SUBMITTED",
+      submittedAt: new Date(),
+    }
+    tempMeterReadings.push(meterReading)
+
+    return {
+      message: "Meter reading submitted successfully",
+      readingId: meterReading.readingId,
+      reading: meterReading.reading,
+      status: meterReading.status,
+    }
+  }
+
   async raiseComplaint(accountNumber: string, complaintType: string, subType: string, description?: string) {
     const priority = this.calculatePriority(complaintType, subType)
     const sla = this.calculateSLA(priority)
@@ -198,6 +232,14 @@ export class WaterService {
     }
   }
 
+  async getAllComplaints(accountNumber: string) {
+    const complaints = await this.prisma.waterComplaint.findMany({
+      where: { accountNumber },
+      orderBy: { createdAt: "desc" },
+    })
+    return complaints
+  }
+
   async createTransferRequest(accountNumber: string, newAddress?: string) {
     const account = await this.prisma.waterAccount.findUnique({
       where: { accountNumber },
@@ -256,5 +298,88 @@ export class WaterService {
       "REJECTED": ["Contact customer care for details", "Reapply with correct documents"],
     }
     return steps[status] || ["Contact customer care"]
+  }
+
+  // Name Change Request
+  async createNameChangeRequest(accountNumber: string, newName: string, reason?: string) {
+    const account = await this.prisma.waterAccount.findUnique({
+      where: { accountNumber },
+    })
+    if (!account) {
+      throw new NotFoundException("Account not found")
+    }
+
+    const requestId = `WATR-NMCH-${Date.now().toString(36).toUpperCase().slice(-6)}`
+    
+    return this.prisma.waterNameChangeRequest.create({
+      data: {
+        requestId,
+        accountNumber,
+        oldName: account.consumerName,
+        newName,
+        reason: reason || "Customer requested name change",
+        status: "SUBMITTED",
+        estimatedCompletion: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      }
+    })
+  }
+
+  // New Connection Request
+  async createNewConnectionRequest(data: {
+    applicantName: string
+    mobileNumber: string
+    email?: string
+    address: string
+    propertyType: string
+    connectionType: string
+  }) {
+    const requestId = `WATR-NEWCONN-${Date.now().toString(36).toUpperCase().slice(-6)}`
+    
+    return this.prisma.waterNewConnectionRequest.create({
+      data: {
+        requestId,
+        ...data,
+        status: "SUBMITTED",
+        estimatedCompletion: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000),
+      }
+    })
+  }
+
+  // Sewerage Request
+  async createSewerageRequest(accountNumber: string, requestType: string, description: string) {
+    const account = await this.prisma.waterAccount.findUnique({
+      where: { accountNumber },
+    })
+    if (!account) {
+      throw new NotFoundException("Account not found")
+    }
+
+    const requestId = `WATR-SEW-${Date.now().toString(36).toUpperCase().slice(-6)}`
+    
+    return this.prisma.waterSewerageRequest.create({
+      data: {
+        requestId,
+        accountNumber,
+        requestType,
+        description,
+        status: "SUBMITTED",
+        estimatedCompletion: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+      }
+    })
+  }
+
+  // Get all requests for an account
+  async getAllNameChangeRequests(accountNumber: string) {
+    return this.prisma.waterNameChangeRequest.findMany({
+      where: { accountNumber },
+      orderBy: { createdAt: "desc" },
+    })
+  }
+
+  async getAllSewerageRequests(accountNumber: string) {
+    return this.prisma.waterSewerageRequest.findMany({
+      where: { accountNumber },
+      orderBy: { createdAt: "desc" },
+    })
   }
 }

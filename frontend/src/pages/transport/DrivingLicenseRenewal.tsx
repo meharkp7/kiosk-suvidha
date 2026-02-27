@@ -3,10 +3,12 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
+import { API_BASE } from "../../api/config"
 
 export default function DrivingLicenseRenewal() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const accountNumber = useAccountNumber("transport")
   const [formData, setFormData] = useState({
     licenseNumber: "",
     dateOfBirth: "",
@@ -24,23 +26,44 @@ export default function DrivingLicenseRenewal() {
   })
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [applicationNumber, setApplicationNumber] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!formData.licenseNumber || !formData.dateOfBirth || !formData.mobileNumber) {
-      alert(t("fillRequiredFields"))
+      alert(t("fillRequiredFields") || "Please fill all required fields")
       return
     }
 
     setLoading(true)
 
-    setTimeout(() => {
-      const applicationId = `DLRENEW${Date.now()}`
-      console.log("Driving license renewal application:", { ...formData, applicationId })
+    try {
+      const res = await fetch(`${API_BASE}/transport/application`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          registrationNumber: accountNumber,
+          applicationType: "LICENSE_RENEWAL",
+          applicantName: formData.licenseNumber,
+          details: formData
+        })
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to submit application')
+      }
+
+      const data = await res.json()
+      setApplicationNumber(data.applicationNumber)
       setSubmitted(true)
+    } catch (error) {
+      console.error("Error:", error)
+      alert("Failed to submit application. Please try again.")
+    } finally {
       setLoading(false)
-    }, 2000)
+    }
   }
 
   if (submitted) {
@@ -50,7 +73,7 @@ export default function DrivingLicenseRenewal() {
           <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
             <div className="text-6xl mb-4">🪪</div>
             <h2 className="text-2xl font-bold text-green-800 mb-2">Application Submitted!</h2>
-            <p className="text-green-700 mb-2">Application ID: DLRENEW{Date.now()}</p>
+            <p className="text-green-700 mb-2">Application ID: {applicationNumber}</p>
             <p className="text-green-600">Your driving license renewal application has been submitted successfully.</p>
             <div className="mt-4 text-left bg-white rounded-lg p-4">
               <h4 className="font-semibold mb-2">Next Steps:</h4>

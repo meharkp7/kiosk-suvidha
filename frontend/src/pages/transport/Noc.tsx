@@ -3,6 +3,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
+import { API_BASE } from "../../api/config"
 
 export default function Noc() {
   const { t } = useTranslation()
@@ -12,14 +13,42 @@ export default function Noc() {
   const [toState, setToState] = useState("")
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [applicationNumber, setApplicationNumber] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!reason) {
+      alert("Please select a reason")
+      return
+    }
     setLoading(true)
-    setTimeout(() => {
+    
+    try {
+      const res = await fetch(`${API_BASE}/transport/application`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          registrationNumber: vehicleNumber,
+          applicationType: "NOC",
+          applicantName: vehicleNumber,
+          details: { reason, toState }
+        })
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to submit application')
+      }
+
+      const data = await res.json()
+      setApplicationNumber(data.applicationNumber)
       setSubmitted(true)
+    } catch (error) {
+      console.error("Error:", error)
+      alert("Failed to submit application. Please try again.")
+    } finally {
       setLoading(false)
-    }, 1500)
+    }
   }
 
   if (submitted) {
@@ -29,7 +58,7 @@ export default function Noc() {
           <div className="bg-green-50 rounded-xl p-8">
             <div className="text-6xl mb-4">📋</div>
             <h2 className="text-2xl font-bold text-green-800">NOC Generated!</h2>
-            <p className="text-green-600 mt-2">Download NOC from downloads</p>
+            <p className="text-green-600 mt-2">Application Number: {applicationNumber}</p>
             <button onClick={() => navigate("/services-dashboard")} className="mt-6 bg-green-600 text-white px-6 py-3 rounded-lg">Back to Services</button>
           </div>
         </div>

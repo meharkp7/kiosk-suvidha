@@ -393,6 +393,34 @@ async function main() {
       dueDate: new Date('2024-03-25'),
       status: 'UNPAID',
       tariffSlab: 'DOMESTIC-1'
+    },
+    {
+      accountNumber: electricityAccount.accountNumber,
+      billingMonth: '2024-04',
+      billingDate: new Date('2024-04-10'),
+      unitsConsumed: 195,
+      fixedCharge: 30,
+      energyCharge: 975,
+      tax: 100.5,
+      lateFee: 0,
+      totalAmount: 1105.5,
+      dueDate: new Date('2024-04-25'),
+      status: 'UNPAID',
+      tariffSlab: 'DOMESTIC-1'
+    },
+    {
+      accountNumber: electricityAccount.accountNumber,
+      billingMonth: '2024-05',
+      billingDate: new Date('2024-05-10'),
+      unitsConsumed: 210,
+      fixedCharge: 30,
+      energyCharge: 1050,
+      tax: 108,
+      lateFee: 0,
+      totalAmount: 1188,
+      dueDate: new Date('2024-05-25'),
+      status: 'UNPAID',
+      tariffSlab: 'DOMESTIC-1'
     }
   ]
 
@@ -427,6 +455,45 @@ async function main() {
       tax: 22.5,
       totalAmount: 247.5,
       dueDate: new Date('2024-02-20'),
+      status: 'UNPAID'
+    },
+    {
+      accountNumber: waterAccount.accountNumber,
+      billingMonth: '2024-03',
+      billingDate: new Date('2024-03-05'),
+      meterReading: 12400,
+      unitsConsumed: 35,
+      waterCharge: 175,
+      sewerageCharge: 87.5,
+      tax: 26.25,
+      totalAmount: 288.75,
+      dueDate: new Date('2024-03-20'),
+      status: 'UNPAID'
+    },
+    {
+      accountNumber: waterAccount.accountNumber,
+      billingMonth: '2024-04',
+      billingDate: new Date('2024-04-05'),
+      meterReading: 12440,
+      unitsConsumed: 40,
+      waterCharge: 200,
+      sewerageCharge: 100,
+      tax: 30,
+      totalAmount: 330,
+      dueDate: new Date('2024-04-20'),
+      status: 'UNPAID'
+    },
+    {
+      accountNumber: waterAccount.accountNumber,
+      billingMonth: '2024-05',
+      billingDate: new Date('2024-05-05'),
+      meterReading: 12485,
+      unitsConsumed: 45,
+      waterCharge: 225,
+      sewerageCharge: 112.5,
+      tax: 33.75,
+      totalAmount: 371.25,
+      dueDate: new Date('2024-05-20'),
       status: 'UNPAID'
     }
   ]
@@ -487,6 +554,16 @@ async function main() {
   const propertyTaxBills = [
     {
       propertyId: propertyAccount.propertyId,
+      financialYear: '2022-23',
+      taxAmount: 4800,
+      rebateAmount: 480,
+      penaltyAmount: 960,
+      totalAmount: 5280,
+      dueDate: new Date('2023-03-31'),
+      status: 'UNPAID'
+    },
+    {
+      propertyId: propertyAccount.propertyId,
       financialYear: '2023-24',
       taxAmount: 5000,
       rebateAmount: 500,
@@ -504,6 +581,16 @@ async function main() {
       penaltyAmount: 0,
       totalAmount: 5200,
       dueDate: new Date('2025-03-31'),
+      status: 'UNPAID'
+    },
+    {
+      propertyId: propertyAccount.propertyId,
+      financialYear: '2025-26',
+      taxAmount: 5500,
+      rebateAmount: 0,
+      penaltyAmount: 0,
+      totalAmount: 5500,
+      dueDate: new Date('2026-03-31'),
       status: 'UNPAID'
     }
   ]
@@ -544,6 +631,33 @@ async function main() {
       status: 'PAID',
       paidDate: new Date('2024-03-08'),
       paymentReference: 'PAY002'
+    },
+    {
+      registrationNumber: vehicleAccount.registrationNumber,
+      challanNumber: 'CH202404004',
+      violationDate: new Date('2024-04-12'),
+      violationType: 'Jumping Red Light',
+      violationLocation: 'HSR Layout, Bangalore',
+      fineAmount: 1000,
+      status: 'UNPAID'
+    },
+    {
+      registrationNumber: vehicleAccount.registrationNumber,
+      challanNumber: 'CH202405005',
+      violationDate: new Date('2024-05-18'),
+      violationType: 'Using Mobile While Driving',
+      violationLocation: 'Whitefield, Bangalore',
+      fineAmount: 1000,
+      status: 'UNPAID'
+    },
+    {
+      registrationNumber: vehicleAccount.registrationNumber,
+      challanNumber: 'CH202406006',
+      violationDate: new Date('2024-06-22'),
+      violationType: 'No Seatbelt',
+      violationLocation: 'Electronic City, Bangalore',
+      fineAmount: 500,
+      status: 'UNPAID'
     }
   ]
 

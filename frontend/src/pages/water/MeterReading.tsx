@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import KioskLayout from "../../components/KioskLayout"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
+import { API_BASE } from "../../api/config"
 
 export default function WaterMeterReading() {
   const { t } = useTranslation()
@@ -28,17 +29,38 @@ export default function WaterMeterReading() {
     e.preventDefault()
     
     if (!meterReading || !photo) {
-      alert(t("enterReadingAndPhoto"))
+      alert(t("enterReadingAndPhoto") || "Please enter reading and upload photo")
       return
     }
 
     setLoading(true)
 
-    setTimeout(() => {
-      console.log("Water meter reading submitted:", { accountNumber, meterReading, photo })
+    try {
+      // Call backend API to submit meter reading
+      const res = await fetch(`${API_BASE}/water/meter-reading`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          accountNumber,
+          reading: parseFloat(meterReading),
+          photoUrl: null // Photo upload would need separate handling
+        })
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to submit meter reading')
+      }
+
+      const data = await res.json()
+      console.log("Water meter reading submitted:", data)
       setSubmitted(true)
+    } catch (error) {
+      console.error("Error submitting meter reading:", error)
+      alert("Failed to submit meter reading. Please try again.")
+    } finally {
       setLoading(false)
-    }, 1500)
+    }
   }
 
   if (submitted) {

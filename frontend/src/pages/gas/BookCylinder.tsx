@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next"
 import { useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
+import { API_BASE } from "../../api/config"
 
 export default function BookCylinder() {
   const { t } = useTranslation()
@@ -26,13 +27,27 @@ export default function BookCylinder() {
   const handleSubmit = async () => {
     setLoading(true)
     
-    // Simulate API call
-    setTimeout(() => {
-      const mockBookingId = `BK${Date.now()}`
-      setBookingId(mockBookingId)
+    try {
+      const res = await fetch(`${API_BASE}/gas/book/${accountNumber}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ quantity })
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to book cylinder')
+      }
+
+      const data = await res.json()
+      setBookingId(data.bookingId)
       setSubmitted(true)
+    } catch (error) {
+      console.error("Error:", error)
+      alert("Failed to book cylinder. Please try again.")
+    } finally {
       setLoading(false)
-    }, 2000)
+    }
   }
 
   if (!accountNumber) {

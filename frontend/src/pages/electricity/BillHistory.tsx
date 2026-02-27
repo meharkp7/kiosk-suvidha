@@ -38,7 +38,13 @@ export default function BillHistory() {
         })
         if (res.ok) {
           const data = await res.json()
-          setBills(data)
+          // Ensure data is an array
+          if (Array.isArray(data)) {
+            setBills(data)
+          } else {
+            console.error("Invalid bills data format:", data)
+            setBills([])
+          }
         } else {
           setError(t("failedToLoadHistory"))
         }

@@ -3,10 +3,12 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
+import { API_BASE } from "../../api/config"
 
 export default function TradeLicense() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const propertyId = useAccountNumber("municipal")
   const [formData, setFormData] = useState({
     businessName: "",
     businessType: "",
@@ -18,14 +20,42 @@ export default function TradeLicense() {
   })
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [requestId, setRequestId] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!formData.businessName || !formData.ownerName || !formData.address) {
+      alert("Please fill all required fields")
+      return
+    }
     setLoading(true)
-    setTimeout(() => {
+    
+    try {
+      const res = await fetch(`${API_BASE}/municipal/certificate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          propertyId,
+          certificateType: "TRADE_LICENSE",
+          applicantName: formData.ownerName,
+          details: formData
+        })
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to submit application')
+      }
+
+      const data = await res.json()
+      setRequestId(data.requestId)
       setSubmitted(true)
+    } catch (error) {
+      console.error("Error:", error)
+      alert("Failed to submit application. Please try again.")
+    } finally {
       setLoading(false)
-    }, 2000)
+    }
   }
 
   if (submitted) {
@@ -35,7 +65,7 @@ export default function TradeLicense() {
           <div className="bg-green-50 rounded-xl p-8">
             <div className="text-6xl mb-4">🏪</div>
             <h2 className="text-2xl font-bold text-green-800">Application Submitted!</h2>
-            <p className="text-green-600 mt-2">License will be issued within 30 days</p>
+            <p className="text-green-600 mt-2">Application ID: {requestId}</p>
             <button onClick={() => navigate("/services-dashboard")} className="mt-6 bg-green-600 text-white px-6 py-3 rounded-lg">Back to Services</button>
           </div>
         </div>

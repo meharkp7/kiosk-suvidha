@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
+import { API_BASE } from "../../api/config"
 
 interface Challan {
   id: string
@@ -29,52 +30,23 @@ export default function ChallanHistory() {
       return
     }
     
-    // Mock data for demonstration
-    const mockChallans: Challan[] = [
-      {
-        id: "1",
-        challanNumber: "CH202401001",
-        violationDate: "2024-01-15",
-        violationType: "Speeding",
-        violationLocation: "MG Road, Bangalore",
-        fineAmount: 1000,
-        status: "PAID",
-        paidDate: "2024-01-20"
-      },
-      {
-        id: "2",
-        challanNumber: "CH202402002",
-        violationDate: "2024-02-10",
-        violationType: "No Helmet",
-        violationLocation: "Indiranagar, Bangalore",
-        fineAmount: 500,
-        status: "PENDING"
-      },
-      {
-        id: "3",
-        challanNumber: "CH202403003",
-        violationDate: "2024-03-05",
-        violationType: "Wrong Parking",
-        violationLocation: "Koramangala, Bangalore",
-        fineAmount: 300,
-        status: "PAID",
-        paidDate: "2024-03-08"
-      },
-      {
-        id: "4",
-        challanNumber: "CH202404004",
-        violationDate: "2024-04-12",
-        violationType: "Signal Jump",
-        violationLocation: "Silk Board, Bangalore",
-        fineAmount: 1500,
-        status: "PENDING"
+    async function loadChallans() {
+      try {
+        const res = await fetch(`${API_BASE}/transport/challans/${accountNumber}`, {
+          credentials: "include",
+        })
+        if (res.ok) {
+          const data = await res.json()
+          setChallans(data)
+        }
+      } catch (err) {
+        console.error("Failed to load challans")
+      } finally {
+        setLoading(false)
       }
-    ]
+    }
 
-    setTimeout(() => {
-      setChallans(mockChallans)
-      setLoading(false)
-    }, 1000)
+    loadChallans()
   }, [accountNumber])
 
   // Show error when no account

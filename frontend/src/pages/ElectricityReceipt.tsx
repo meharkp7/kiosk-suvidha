@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next"
 import { useLocation, useNavigate } from "react-router-dom"
+import { useEffect } from "react"
 import PageWrapper from "../components/PageWrapper"
 import ScreenLayout from "../components/ScreenLayout"
 
@@ -10,8 +11,13 @@ export default function ElectricityReceipt() {
 
   const { amount, reference } = state || {}
 
+  useEffect(() => {
+    if (!amount || !reference) {
+      navigate("/services-dashboard")
+    }
+  }, [amount, reference, navigate])
+
   if (!amount || !reference) {
-    navigate("/services-dashboard")
     return null
   }
 

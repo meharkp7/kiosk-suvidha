@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next"
 import { useState, useEffect } from "react"
-import { useNavigate, useLocation } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
 import { API_BASE } from "../../api/config"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
@@ -12,69 +12,88 @@ type Receipt = {
   status: string
   type: string
   reference: string
+  department: string
 }
 
 export default function ReceiptDownload() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const location = useLocation()
   const accountNumber = useAccountNumber("electricity")
   const [receipts, setReceipts] = useState<Receipt[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!accountNumber) return
+    if (!accountNumber) {
+      setLoading(false)
+      return
+    }
 
-    // Mock receipt data
-    const mockReceipts: Receipt[] = [
-      {
-        id: "RCP202403001",
-        date: "2024-03-15",
-        amount: 990.50,
-        status: "PAID",
-        type: "Electricity Bill",
-        reference: "EL123456789"
-      },
-      {
-        id: "RCP202402001",
-        date: "2024-02-20",
-        amount: 1023.00,
-        status: "PAID",
-        type: "Electricity Bill",
-        reference: "EL123456789"
-      },
-      {
-        id: "RCP202401001",
-        date: "2024-01-20",
-        amount: 858.00,
-        status: "PAID",
-        type: "Electricity Bill",
-        reference: "EL123456789"
+    async function loadReceipts() {
+      try {
+        const res = await fetch(`${API_BASE}/payments/history?accountNumber=${accountNumber}&department=electricity`, {
+          credentials: "include",
+        })
+        if (res.ok) {
+          const data = await res.json()
+          if (data.success && Array.isArray(data.history)) {
+            // Map payment history to receipt format
+            const mappedReceipts = data.history.map((payment: any) => ({
+              id: payment.id || `RCP${Date.now()}${Math.random().toString(36).substr(2, 5)}`,
+              date: payment.createdAt ? new Date(payment.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+              amount: payment.amount || 0,
+              status: payment.status || "PAID",
+              type: `${payment.department?.charAt(0).toUpperCase() + payment.department?.slice(1)} Bill`,
+              reference: payment.paymentId || payment.id || "N/A",
+              department: payment.department || "electricity"
+            }))
+            setReceipts(mappedReceipts)
+          } else {
+            setReceipts([])
+          }
+        } else {
+          setReceipts([])
+        }
+      } catch (err) {
+        console.error("Failed to load receipts:", err)
+        setReceipts([])
+      } finally {
+        setLoading(false)
       }
-    ]
+    }
 
-    setReceipts(mockReceipts)
-    setLoading(false)
+    loadReceipts()
   }, [accountNumber])
 
   const handleDownload = (receipt: Receipt) => {
-    // Generate PDF receipt
-    const receiptData = {
-      id: receipt.id,
-      date: receipt.date,
-      amount: receipt.amount,
-      type: receipt.type,
-      reference: receipt.reference,
-      accountNumber
-    }
+    // Generate receipt content
+    const receiptContent = `
+================================
+      SUVIDHA KIOSK
+   Payment Receipt
+================================
 
-    // Create and download PDF
-    const dataStr = JSON.stringify(receiptData, null, 2)
-    const dataBlob = new Blob([dataStr], { type: "application/json" })
+Receipt ID: ${receipt.id}
+Date: ${receipt.date}
+Account Number: ${accountNumber}
+Department: ${receipt.department?.toUpperCase()}
+
+Type: ${receipt.type}
+Reference: ${receipt.reference}
+Amount Paid: ₹${receipt.amount.toFixed(2)}
+Status: ${receipt.status}
+
+================================
+Thank you for using SUVIDHA!
+www.suvidha.gov.in
+================================
+    `
+
+    // Create and download text file
+    const dataBlob = new Blob([receiptContent], { type: "text/plain" })
     const url = URL.createObjectURL(dataBlob)
     const link = document.createElement("a")
     link.href = url
-    link.download = `receipt-${receipt.id}.json`
+    link.download = `receipt-${receipt.id}.txt`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)

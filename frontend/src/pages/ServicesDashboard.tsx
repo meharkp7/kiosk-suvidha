@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom"
 import KioskLayout from "../components/KioskLayout"
 import Sidebar from "../components/Sidebar"
 import { API_BASE } from "../api/config"
+import { useSession } from "../context/SessionContext"
 
 const departmentIcons: Record<string, string> = {
   electricity: "⚡",
@@ -100,39 +101,42 @@ export default function ServicesDashboard() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  // Get selected accounts from navigation state (passed from Dashboard)
+  // Get selected accounts from navigation state (passed from Dashboard) OR sessionStorage
   const selectedAccounts = location.state?.accounts as Account[] | undefined
   
   // Debug logging
   console.log("ServicesDashboard - selectedAccounts from state:", selectedAccounts)
 
-  const [accounts, setAccounts] = useState<Account[]>(selectedAccounts || [])
+  const [accounts, setAccounts] = useState<Account[]>(() => {
+    // First check location state, then sessionStorage
+    if (selectedAccounts && selectedAccounts.length > 0) {
+      return selectedAccounts
+    }
+    // Try to load from sessionStorage
+    const stored = sessionStorage.getItem("linkedAccounts")
+    if (stored) {
+      try {
+        return JSON.parse(stored)
+      } catch (e) {
+        console.error("Failed to parse stored accounts:", e)
+      }
+    }
+    return []
+  })
   const [activeDept, setActiveDept] = useState<string>("")
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
   
-  // Session timer
-  const [sessionTime, setSessionTime] = useState(300)
+  // Use global session timer
+  const { timeLeft: sessionTime } = useSession()
 
   // Get linked departments from accounts
   const linkedDepts = accounts.map((a) => a.department.toLowerCase())
   
   console.log("ServicesDashboard - linkedDepts:", linkedDepts)
   
-  // Session timer effect
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setSessionTime((prev) => {
-        if (prev <= 1) {
-          navigate("/login")
-          return 0
-        }
-        return prev - 1
-      })
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [navigate])
-  
+  // Use global session timer from SessionContext - no local timer needed
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
@@ -153,15 +157,29 @@ export default function ServicesDashboard() {
       department: dept,
       accountNumber,
     }
-    setAccounts((prev) => [...prev, newAccount])
+    setAccounts((prev) => {
+      const updated = [...prev, newAccount]
+      // Save to sessionStorage
+      sessionStorage.setItem("linkedAccounts", JSON.stringify(updated))
+      return updated
+    })
     setActiveDept(dept.toLowerCase())
   }
+
+  // Save accounts to sessionStorage whenever they change
+  useEffect(() => {
+    if (accounts.length > 0) {
+      sessionStorage.setItem("linkedAccounts", JSON.stringify(accounts))
+    }
+  }, [accounts])
 
   // Only use accounts passed from Dashboard - do NOT fetch all accounts
   useEffect(() => {
     if (selectedAccounts && selectedAccounts.length > 0) {
       setAccounts(selectedAccounts)
       setActiveDept(selectedAccounts[0].department.toLowerCase())
+      // Save to sessionStorage
+      sessionStorage.setItem("linkedAccounts", JSON.stringify(selectedAccounts))
     }
   }, [selectedAccounts])
 

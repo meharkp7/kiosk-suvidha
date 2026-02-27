@@ -239,4 +239,42 @@ export class GasService {
 
     return request
   }
+
+  // New Connection Request
+  async createNewConnectionRequest(data: {
+    applicantName: string
+    mobileNumber: string
+    email?: string
+    address: string
+    connectionType: string
+    distributorCode?: string
+  }) {
+    const requestId = `GAS-NEWCONN-${Date.now().toString(36).toUpperCase().slice(-6)}`
+    
+    return this.prisma.gasNewConnectionRequest.create({
+      data: {
+        requestId,
+        ...data,
+        status: "SUBMITTED",
+        estimatedCompletion: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000),
+      }
+    })
+  }
+
+  // Surrender Request
+  async createSurrenderRequest(data: {
+    consumerNumber: string
+    reason: string
+  }) {
+    const requestId = `GAS-SURRENDER-${Date.now().toString(36).toUpperCase().slice(-6)}`
+    
+    return this.prisma.gasSurrenderRequest.create({
+      data: {
+        requestId,
+        ...data,
+        status: "SUBMITTED",
+        estimatedCompletion: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      }
+    })
+  }
 }

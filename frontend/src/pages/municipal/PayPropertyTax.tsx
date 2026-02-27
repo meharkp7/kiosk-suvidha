@@ -58,10 +58,17 @@ export default function PayPropertyTax() {
         })
         if (res.ok) {
           const data = await res.json()
-          setBills(data)
+          // Ensure data is an array
+          if (Array.isArray(data)) {
+            setBills(data)
+          } else {
+            console.error("Invalid bills data format:", data)
+            setBills([])
+          }
         }
       } catch (err) {
         console.error("Failed to load tax bills")
+        setBills([])
       } finally {
         setLoading(false)
       }
@@ -150,7 +157,19 @@ export default function PayPropertyTax() {
         const verifyData = await verifyResponse.json()
 
         if (verifyData.success) {
-          navigate('/municipal/property-details', { state: { accountNumber } })
+          navigate('/receipt', { 
+            state: { 
+              amount: bill.totalAmount,
+              reference: demoPaymentId,
+              department: 'municipal',
+              accountNumber,
+              consumerName: '',
+              billMonth: bill.financialYear,
+              paymentDate: new Date().toLocaleString('en-IN'),
+              paymentMethod: 'Demo/UPI',
+              transactionId: demoPaymentId
+            } 
+          })
         } else {
           alert('Payment verification failed. Please contact support.')
           setLoading(false)
@@ -182,7 +201,19 @@ export default function PayPropertyTax() {
           const verifyData = await verifyResponse.json()
 
           if (verifyData.success) {
-            navigate('/municipal/property-details', { state: { accountNumber } })
+            navigate('/receipt', { 
+              state: { 
+                amount: bill.totalAmount,
+                reference: response.razorpay_payment_id,
+                department: 'municipal',
+                accountNumber,
+                consumerName: '',
+                billMonth: bill.financialYear,
+                paymentDate: new Date().toLocaleString('en-IN'),
+                paymentMethod: 'UPI/Card/NetBanking',
+                transactionId: response.razorpay_payment_id
+              } 
+            })
           } else {
             alert('Payment verification failed. Please contact support.')
           }

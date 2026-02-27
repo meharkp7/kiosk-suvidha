@@ -3,6 +3,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
+import { API_BASE } from "../../api/config"
 
 export default function LoadChange() {
   const { t } = useTranslation()
@@ -17,14 +18,34 @@ export default function LoadChange() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newLoad || !reason) {
-      alert(t("fillRequiredFields"))
+      alert(t("fillRequiredFields") || "Please fill all required fields")
       return
     }
     setLoading(true)
-    setTimeout(() => {
+    
+    try {
+      const res = await fetch(`${API_BASE}/electricity/load-change`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          accountNumber,
+          newLoad: parseInt(newLoad),
+          reason
+        })
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to submit request')
+      }
+
       setSubmitted(true)
+    } catch (error) {
+      console.error("Error:", error)
+      alert("Failed to submit request. Please try again.")
+    } finally {
       setLoading(false)
-    }, 1500)
+    }
   }
 
   if (submitted) {

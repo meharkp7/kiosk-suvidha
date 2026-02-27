@@ -2,10 +2,8 @@ import { useTranslation } from "react-i18next"
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
-import ReceiptModal from "../../components/ReceiptModal"
 import { API_BASE } from "../../api/config"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
-import type { ReceiptData } from "../../utils/receipt"
 
 declare global {
   interface Window {
@@ -27,11 +25,9 @@ export default function ElectricityPayBill() {
   const accountNumber = useAccountNumber("electricity")
   const { bill } = location.state || {}
 
-  const [paymentMethod, setPaymentMethod] = useState<"upi" | "card" | "cash">("upi")
+  const [paymentMethod, setPaymentMethod] = useState<"card">("card")
   const [loading, setLoading] = useState(false)
   const [razorpayLoaded, setRazorpayLoaded] = useState(false)
-  const [showReceipt, setShowReceipt] = useState(false)
-  const [receiptData, setReceiptData] = useState<ReceiptData | null>(null)
 
   useEffect(() => {
     // Load Razorpay script
@@ -124,54 +120,7 @@ export default function ElectricityPayBill() {
         throw new Error('Failed to create payment order')
       }
 
-      // Handle different payment methods
-      if (paymentMethod === "upi") {
-        // Generate UPI QR code
-        const upiId = "suvidha@ybl" // Your UPI ID
-        const upiUrl = `upi://pay?pa=${upiId}&pn=SUVIDHA%20Kiosk&am=${bill.totalAmount}&cu=INR&tn=Electricity%20Bill%20${bill.billingMonth}`
-        
-        // Show UPI QR modal
-        alert(`UPI Payment: ${upiUrl}\n\nScan with any UPI app to pay ₹${bill.totalAmount}`)
-        
-        // For demo, simulate successful UPI payment
-        setTimeout(async () => {
-          const demoPaymentId = `upi_payment_${Date.now()}`
-          const verifyResponse = await fetch(`${API_BASE}/payments/verify`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({
-              razorpayOrderId: orderData.order.id,
-              razorpayPaymentId: demoPaymentId,
-              razorpaySignature: `upi_sig_${Math.random().toString(36).substr(2, 9)}`
-            })
-          })
-          
-          const verifyData = await verifyResponse.json()
-          
-          if (verifyData.success) {
-            const receipt: ReceiptData = {
-              id: orderData.order.id,
-              department: 'Electricity',
-              serviceType: 'Bill Payment',
-              accountNumber: accountNumber,
-              amount: bill.totalAmount,
-              date: new Date().toLocaleString('en-IN'),
-              paymentMethod: 'UPI',
-              reference: demoPaymentId,
-              items: [
-                { description: `Bill for ${bill.billingMonth}`, amount: bill.totalAmount },
-                { description: 'Convenience Fee', amount: 0 }
-              ]
-            }
-            setReceiptData(receipt)
-            setShowReceipt(true)
-          }
-          setLoading(false)
-        }, 3000)
-        return
-      }
-      
+      // Handle payment - only Card via Razorpay
       // Card payment - use Razorpay
       if (paymentMethod === "card") {
         // Open Razorpay checkout for card payments
@@ -198,27 +147,23 @@ export default function ElectricityPayBill() {
             const verifyData = await verifyResponse.json()
 
             if (verifyData.success) {
-              // Generate receipt data
-              const receipt: ReceiptData = {
-                id: response.razorpay_order_id,
-                department: 'Electricity',
-                serviceType: 'Bill Payment',
-                accountNumber: accountNumber,
+            navigate('/receipt', { 
+              state: { 
                 amount: bill.totalAmount,
-                date: new Date().toLocaleString('en-IN'),
-                paymentMethod: 'CARD',
                 reference: response.razorpay_payment_id,
-                items: [
-                  { description: `Bill for ${bill.billingMonth}`, amount: bill.totalAmount },
-                  { description: 'Convenience Fee', amount: 0 }
-                ]
-              }
-              setReceiptData(receipt)
-              setShowReceipt(true)
-            } else {
-              alert('Payment verification failed. Please contact support.')
-            }
-            setLoading(false)
+                department: 'electricity',
+                accountNumber,
+                consumerName: '',
+                billMonth: bill.billingMonth,
+                paymentDate: new Date().toLocaleString('en-IN'),
+                paymentMethod: 'CARD',
+                transactionId: response.razorpay_payment_id
+              } 
+            })
+          } else {
+            alert('Payment verification failed. Please contact support.')
+          }
+          setLoading(false)
           },
           modal: {
             ondismiss: function () {
@@ -258,23 +203,19 @@ export default function ElectricityPayBill() {
         const verifyData = await verifyResponse.json()
 
         if (verifyData.success) {
-          // Generate receipt data
-          const receipt: ReceiptData = {
-            id: orderData.order.id,
-            department: 'Electricity',
-            serviceType: 'Bill Payment',
-            accountNumber: accountNumber,
-            amount: bill.totalAmount,
-            date: new Date().toLocaleString('en-IN'),
-            paymentMethod: paymentMethod.toUpperCase(),
-            reference: demoPaymentId,
-            items: [
-              { description: `Bill for ${bill.billingMonth}`, amount: bill.totalAmount },
-              { description: 'Convenience Fee', amount: 0 }
-            ]
-          }
-          setReceiptData(receipt)
-          setShowReceipt(true)
+          navigate('/receipt', { 
+            state: { 
+              amount: bill.totalAmount,
+              reference: demoPaymentId,
+              department: 'electricity',
+              accountNumber,
+              consumerName: '',
+              billMonth: bill.billingMonth,
+              paymentDate: new Date().toLocaleString('en-IN'),
+              paymentMethod: 'Demo/CARD',
+              transactionId: demoPaymentId
+            } 
+          })
         } else {
           alert('Payment verification failed. Please contact support.')
           setLoading(false)
@@ -305,35 +246,15 @@ export default function ElectricityPayBill() {
           <p className="text-amber-100 mt-2">{bill.billingMonth}</p>
         </div>
 
-        {/* Payment Methods */}
+        {/* Payment Method - Card Only */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
-          <h3 className="text-xl font-bold text-slate-800 mb-6">Select Payment Method</h3>
+          <h3 className="text-xl font-bold text-slate-800 mb-6">Payment Method</h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <button
-              onClick={() => setPaymentMethod("upi")}
-              className={`p-6 rounded-xl border-2 transition-all ${
-                paymentMethod === "upi"
-                  ? "border-blue-600 bg-blue-50"
-                  : "border-slate-200 hover:border-blue-300"
-              }`}
-            >
-              <span className="text-4xl mb-2 block">📱</span>
-              <p className="font-semibold text-slate-800">UPI</p>
-              <p className="text-sm text-slate-500">Google Pay, PhonePe</p>
-            </button>
-
-            <button
-              onClick={() => setPaymentMethod("card")}
-              className={`p-6 rounded-xl border-2 transition-all ${
-                paymentMethod === "card"
-                  ? "border-blue-600 bg-blue-50"
-                  : "border-slate-200 hover:border-blue-300"
-              }`}
-            >
+          <div className="grid grid-cols-1 gap-4 max-w-md mx-auto">
+            <button className="p-6 rounded-xl border-2 border-blue-500 bg-blue-50 text-center">
               <span className="text-4xl mb-2 block">💳</span>
-              <p className="font-semibold text-slate-800">Card</p>
-              <p className="text-sm text-slate-500">Credit/Debit Card</p>
+              <p className="font-semibold text-lg">Card / Net Banking</p>
+              <p className="text-sm text-slate-500">Credit/Debit Card, UPI via Razorpay</p>
             </button>
           </div>
         </div>
@@ -366,16 +287,6 @@ export default function ElectricityPayBill() {
           </p>
         </div>
       </div>
-
-      {/* Receipt Modal */}
-      <ReceiptModal
-        isOpen={showReceipt}
-        onClose={() => {
-          setShowReceipt(false)
-          navigate('/electricity/bill-history', { state: { accountNumber } })
-        }}
-        receiptData={receiptData}
-      />
     </KioskLayout>
   )
 }

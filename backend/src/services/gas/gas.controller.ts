@@ -58,4 +58,28 @@ export class GasController {
   getTransferStatus(@Param("requestId") requestId: string) {
     return this.gasService.getTransferStatus(requestId)
   }
+
+  @Post("new-connection")
+  createNewConnection(
+    @Body() data: {
+      applicantName: string
+      mobileNumber: string
+      email?: string
+      address: string
+      connectionType: string
+      distributorCode?: string
+    },
+  ) {
+    return this.gasService.createNewConnectionRequest(data)
+  }
+
+  @Post("surrender")
+  surrenderConnection(
+    @Body() data: {
+      consumerNumber: string
+      reason: string
+    },
+  ) {
+    return this.gasService.createSurrenderRequest(data)
+  }
 }

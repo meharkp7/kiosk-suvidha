@@ -1,6 +1,9 @@
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common"
 import { PrismaClient } from "@prisma/client"
 
+// Session-only in-memory storage (cleared on server restart - no persistence)
+const sessionRequests: Map<string, any[]> = new Map()
+
 @Injectable()
 export class ElectricityService {
   private prisma = new PrismaClient()
@@ -206,6 +209,26 @@ export class ElectricityService {
     }
   }
 
+  async submitMeterReading(accountNumber: string, reading: number, photoUrl?: string) {
+    const account = await this.prisma.electricityAccount.findUnique({
+      where: { accountNumber },
+    })
+
+    if (!account) {
+      throw new NotFoundException("Account not found")
+    }
+
+    const readingId = `EMR-${Date.now().toString(36).toUpperCase().slice(-6)}`
+
+    return {
+      message: "Meter reading submitted successfully",
+      readingId,
+      reading,
+      status: "SUBMITTED",
+      submittedAt: new Date(),
+    }
+  }
+
   async raiseComplaint(
     accountNumber: string,
     complaintType: string,
@@ -297,6 +320,14 @@ export class ElectricityService {
       isOverdue: now > estimated && complaint.status !== "RESOLVED",
       timeline,
     }
+  }
+
+  async getAllComplaints(accountNumber: string) {
+    const complaints = await this.prisma.electricityComplaint.findMany({
+      where: { accountNumber },
+      orderBy: { createdAt: "desc" },
+    })
+    return complaints
   }
 
   async getLatestComplaint(accountNumber: string) {
@@ -424,5 +455,138 @@ export class ElectricityService {
         updatedAt: new Date(),
       },
     })
+  }
+
+  // ============================================
+  // SESSION-ONLY REQUESTS (No persistence after restart)
+  // ============================================
+
+  private getSessionRequests(accountNumber: string): any[] {
+    return sessionRequests.get(accountNumber) || []
+  }
+
+  private addSessionRequest(accountNumber: string, request: any): void {
+    const existing = this.getSessionRequests(accountNumber)
+    existing.push(request)
+    sessionRequests.set(accountNumber, existing)
+  }
+
+  // Name Change Request - Stored in Database
+  async createNameChangeRequest(accountNumber: string, newName: string, reason?: string) {
+    const account = await this.prisma.electricityAccount.findUnique({
+      where: { accountNumber },
+    })
+    if (!account) {
+      throw new NotFoundException("Account not found")
+    }
+
+    const requestId = `NMCH-${Date.now().toString(36).toUpperCase().slice(-6)}`
+    
+    return this.prisma.electricityNameChangeRequest.create({
+      data: {
+        requestId,
+        accountNumber,
+        oldName: account.consumerName,
+        newName,
+        reason: reason || "Customer requested name change",
+        status: "SUBMITTED",
+        estimatedCompletion: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      }
+    })
+  }
+
+  // Load Change Request - Stored in Database
+  async createLoadChangeRequest(accountNumber: string, newLoad: number, reason: string) {
+    const account = await this.prisma.electricityAccount.findUnique({
+      where: { accountNumber },
+    })
+    if (!account) {
+      throw new NotFoundException("Account not found")
+    }
+
+    const requestId = `LDCH-${Date.now().toString(36).toUpperCase().slice(-6)}`
+    
+    return this.prisma.electricityLoadChangeRequest.create({
+      data: {
+        requestId,
+        accountNumber,
+        oldLoad: account.sanctionedLoad,
+        newLoad,
+        reason,
+        status: "SUBMITTED",
+        estimatedCompletion: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+      }
+    })
+  }
+
+  // New Connection Request - Stored in Database
+  async createNewConnectionRequest(data: {
+    applicantName: string
+    mobileNumber: string
+    email?: string
+    address: string
+    propertyType: string
+    loadRequired: number
+  }) {
+    const requestId = `NEWCONN-${Date.now().toString(36).toUpperCase().slice(-6)}`
+    
+    return this.prisma.electricityNewConnectionRequest.create({
+      data: {
+        requestId,
+        ...data,
+        status: "SUBMITTED",
+        estimatedCompletion: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000),
+      }
+    })
+  }
+
+  // Billing Issue Request - Stored in Database
+  async createBillingIssueRequest(accountNumber: string, issueType: string, description: string) {
+    const account = await this.prisma.electricityAccount.findUnique({
+      where: { accountNumber },
+    })
+    if (!account) {
+      throw new NotFoundException("Account not found")
+    }
+
+    const requestId = `BILL-${Date.now().toString(36).toUpperCase().slice(-6)}`
+    
+    return this.prisma.electricityBillingIssue.create({
+      data: {
+        requestId,
+        accountNumber,
+        issueType,
+        description,
+        status: "SUBMITTED",
+        estimatedResolution: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      }
+    })
+  }
+
+  // Get all requests for an account (for status pages)
+  async getAllNameChangeRequests(accountNumber: string) {
+    return this.prisma.electricityNameChangeRequest.findMany({
+      where: { accountNumber },
+      orderBy: { createdAt: "desc" },
+    })
+  }
+
+  async getAllLoadChangeRequests(accountNumber: string) {
+    return this.prisma.electricityLoadChangeRequest.findMany({
+      where: { accountNumber },
+      orderBy: { createdAt: "desc" },
+    })
+  }
+
+  async getAllBillingIssues(accountNumber: string) {
+    return this.prisma.electricityBillingIssue.findMany({
+      where: { accountNumber },
+      orderBy: { createdAt: "desc" },
+    })
+  }
+
+  // Get all session requests for an account
+  async getAllSessionRequests(accountNumber: string) {
+    return this.getSessionRequests(accountNumber)
   }
 }

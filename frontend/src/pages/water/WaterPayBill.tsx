@@ -117,7 +117,19 @@ export default function WaterPayBill() {
         const verifyData = await verifyResponse.json()
 
         if (verifyData.success) {
-          navigate('/water/history', { state: { accountNumber } })
+          navigate('/receipt', { 
+            state: { 
+              amount: bill.totalAmount,
+              reference: demoPaymentId,
+              department: 'water',
+              accountNumber,
+              consumerName: bill.consumerName || '',
+              billMonth: bill.billingMonth,
+              paymentDate: new Date().toLocaleString('en-IN'),
+              paymentMethod: 'Demo/UPI',
+              transactionId: demoPaymentId
+            } 
+          })
         } else {
           alert('Payment verification failed. Please contact support.')
           setLoading(false)
@@ -149,7 +161,19 @@ export default function WaterPayBill() {
           const verifyData = await verifyResponse.json()
 
           if (verifyData.success) {
-            navigate('/water/history', { state: { accountNumber } })
+            navigate('/receipt', { 
+              state: { 
+                amount: bill.totalAmount,
+                reference: response.razorpay_payment_id,
+                department: 'water',
+                accountNumber,
+                consumerName: bill.consumerName || '',
+                billMonth: bill.billingMonth,
+                paymentDate: new Date().toLocaleString('en-IN'),
+                paymentMethod: 'UPI/Card/NetBanking',
+                transactionId: response.razorpay_payment_id
+              } 
+            })
           } else {
             alert('Payment verification failed. Please contact support.')
           }
@@ -195,18 +219,11 @@ export default function WaterPayBill() {
 
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
           <h3 className="text-xl font-bold text-slate-800 mb-6">Payment Method</h3>
-          <div className="grid grid-cols-3 gap-4">
-            <button className="p-4 rounded-xl border-2 border-blue-500 bg-blue-50 text-center">
-              <span className="text-3xl mb-2 block">📱</span>
-              <p className="font-semibold">UPI</p>
-            </button>
-            <button className="p-4 rounded-xl border-2 border-slate-200 hover:border-blue-300 text-center">
-              <span className="text-3xl mb-2 block">💳</span>
-              <p className="font-semibold">Card</p>
-            </button>
-            <button className="p-4 rounded-xl border-2 border-slate-200 hover:border-blue-300 text-center">
-              <span className="text-3xl mb-2 block">💵</span>
-              <p className="font-semibold">Cash</p>
+          <div className="grid grid-cols-1 gap-4 max-w-md mx-auto">
+            <button className="p-6 rounded-xl border-2 border-blue-500 bg-blue-50 text-center">
+              <span className="text-4xl mb-2 block">�</span>
+              <p className="font-semibold text-lg">Card / Net Banking</p>
+              <p className="text-sm text-slate-500">Credit/Debit Card, UPI via Razorpay</p>
             </button>
           </div>
         </div>

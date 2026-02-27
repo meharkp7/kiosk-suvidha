@@ -3,6 +3,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
+import { API_BASE } from "../../api/config"
 
 export default function AddMember() {
   const { t } = useTranslation()
@@ -21,23 +22,43 @@ export default function AddMember() {
   })
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [applicationNumber, setApplicationNumber] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!formData.memberName || !formData.relationship || !formData.aadhaarNumber) {
-      alert(t("fillRequiredFields"))
+      alert(t("fillRequiredFields") || "Please fill all required fields")
       return
     }
 
     setLoading(true)
 
-    setTimeout(() => {
-      const applicationId = `ADD${Date.now()}`
-      console.log("Add member application:", { ...formData, applicationId })
+    try {
+      const res = await fetch(`${API_BASE}/pds/member-request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          cardNumber,
+          requestType: "ADD_MEMBER",
+          details: formData
+        })
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to submit application')
+      }
+
+      const data = await res.json()
+      setApplicationNumber(data.requestId)
       setSubmitted(true)
+    } catch (error) {
+      console.error("Error:", error)
+      alert("Failed to submit application. Please try again.")
+    } finally {
       setLoading(false)
-    }, 2000)
+    }
   }
 
   if (submitted) {
@@ -47,7 +68,7 @@ export default function AddMember() {
           <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
             <div className="text-6xl mb-4">👨‍👩‍👧‍👦</div>
             <h2 className="text-2xl font-bold text-green-800 mb-2">Application Submitted!</h2>
-            <p className="text-green-700 mb-2">Application ID: ADD{Date.now()}</p>
+            <p className="text-green-700 mb-2">Application ID: {applicationNumber}</p>
             <p className="text-green-600">Your request to add family member has been submitted successfully.</p>
             <div className="mt-4 text-left bg-white rounded-lg p-4">
               <h4 className="font-semibold mb-2">Next Steps:</h4>

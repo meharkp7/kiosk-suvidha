@@ -3,6 +3,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
+import { API_BASE } from "../../api/config"
 
 export default function QualityComplaint() {
   const { t } = useTranslation()
@@ -14,14 +15,41 @@ export default function QualityComplaint() {
   const [description, setDescription] = useState("")
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [complaintId, setComplaintId] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!commodity || !issueType) {
+      alert("Please fill all required fields")
+      return
+    }
     setLoading(true)
-    setTimeout(() => {
+    
+    try {
+      const res = await fetch(`${API_BASE}/pds/grievance`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          cardNumber,
+          grievanceType: "QUALITY_COMPLAINT",
+          description: `${commodity} - ${issueType}: ${description} (FPS: ${fpsName})`
+        })
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to submit complaint')
+      }
+
+      const data = await res.json()
+      setComplaintId(data.grievanceId)
       setSubmitted(true)
+    } catch (error) {
+      console.error("Error:", error)
+      alert("Failed to submit complaint. Please try again.")
+    } finally {
       setLoading(false)
-    }, 1500)
+    }
   }
 
   if (submitted) {
@@ -31,7 +59,7 @@ export default function QualityComplaint() {
           <div className="bg-green-50 rounded-xl p-8">
             <div className="text-6xl mb-4">🍞</div>
             <h2 className="text-2xl font-bold text-green-800">Complaint Registered!</h2>
-            <p className="text-green-600 mt-2">Complaint ID: QC{Date.now()}</p>
+            <p className="text-green-600 mt-2">Complaint ID: {complaintId}</p>
             <button onClick={() => navigate("/services-dashboard")} className="mt-6 bg-green-600 text-white px-6 py-3 rounded-lg">Back to Services</button>
           </div>
         </div>

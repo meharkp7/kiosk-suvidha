@@ -2,9 +2,9 @@ import { API_BASE } from "./config"
 
 export async function sendOtp(phone: string) {
   try {
-    console.log("Sending OTP to:", phone, "API Base:", import.meta.env.VITE_API_BASE_URL || "http://localhost:3000")
+    console.log("Sending OTP to:", phone, "API Base:", API_BASE)
     
-    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:3000"}/auth/send-otp`, {
+    const res = await fetch(`${API_BASE}/auth/send-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ phone }),
@@ -32,9 +32,9 @@ export async function sendOtp(phone: string) {
 
 export async function verifyOtp(phone: string, otp: string) {
   try {
-    console.log('Attempting OTP verification:', { phone, otp, apiBase: import.meta.env.VITE_API_BASE_URL })
+    console.log('Attempting OTP verification:', { phone, otp, apiBase: API_BASE })
     
-    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:3000"}/auth/verify-otp`, {
+    const res = await fetch(`${API_BASE}/auth/verify-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ phone, otp }),

@@ -3,6 +3,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import KioskLayout from "../../components/KioskLayout"
 import { useAccountNumber } from "../../hooks/useAccountNumber"
+import { API_BASE } from "../../api/config"
 
 export default function MeterReading() {
   const { t } = useTranslation()
@@ -17,18 +18,38 @@ export default function MeterReading() {
     e.preventDefault()
     
     if (!meterReading || !photo) {
-      alert(t("enterReadingAndPhoto"))
+      alert(t("enterReadingAndPhoto") || "Please enter reading and upload photo")
       return
     }
 
     setLoading(true)
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Meter reading submitted:", { accountNumber, meterReading, photo })
+    try {
+      // Call backend API
+      const res = await fetch(`${API_BASE}/electricity/meter-reading`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          accountNumber,
+          reading: parseFloat(meterReading),
+          photoUrl: null
+        })
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to submit meter reading')
+      }
+
+      const data = await res.json()
+      console.log("Meter reading submitted:", data)
       setSubmitted(true)
+    } catch (error) {
+      console.error("Error:", error)
+      alert("Failed to submit. Please try again.")
+    } finally {
       setLoading(false)
-    }, 1500)
+    }
   }
 
   if (submitted) {
