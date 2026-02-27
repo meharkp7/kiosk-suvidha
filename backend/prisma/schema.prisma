@@ -9,6 +9,67 @@ datasource db {
 }
 
 // ============================================
+// USER MANAGEMENT & ROLES
+// ============================================
+
+enum UserRole {
+  TENANT
+  OWNER
+  ADMIN
+  KIOSK_USER
+}
+
+model User {
+  id            String    @id @default(uuid())
+  phoneNumber   String    @unique
+  role          UserRole  @default(KIOSK_USER)
+  isActive      Boolean   @default(true)
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  sessions      UserSession[]
+  receipts      Receipt[]
+  auditLogs     AuditLog[]
+}
+
+model UserSession {
+  id            String    @id @default(uuid())
+  userId        String
+  token         String    @unique
+  ipAddress     String?
+  userAgent     String?
+  isActive      Boolean   @default(true)
+  lastActiveAt  DateTime  @default(now())
+  expiresAt     DateTime
+  createdAt     DateTime  @default(now())
+  
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([token])
+}
+
+model Receipt {
+  id            String    @id @default(uuid())
+  userId        String
+  paymentId     String    @unique
+  department    String
+  accountNumber String
+  amount        Float
+  printCount    Int       @default(0)
+  maxPrints     Int       @default(1)
+  printedAt     DateTime?
+  createdAt     DateTime  @default(now())
+  
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([paymentId])
+}
+
+// ============================================
 // CORE MODELS
 // ============================================
 
@@ -652,7 +713,14 @@ model AuditLog {
   ipAddress     String?
   userAgent     String?
   metadata      String?
+  severity      String   @default("INFO") // INFO, WARN, ERROR, CRITICAL
   createdAt     DateTime @default(now())
+  
+  user          User?    @relation(fields: [userId], references: [id])
+  
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
 }
 
 model RateLimit {
