@@ -454,7 +454,7 @@ i18n.use(initReactI18next).init({
         unlinkService: "Unlink service",
         serviceStatus: "Service status",
         serviceHistory: "Service history",
-        serviceDetails: "Service details",
+        serviceDetailsDesc: "View service details",
         serviceSettings: "Service settings",
         serviceSupport: "Service support",
         serviceFAQ: "Service FAQ",
