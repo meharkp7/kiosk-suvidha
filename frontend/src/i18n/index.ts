@@ -127,6 +127,14 @@ i18n.use(initReactI18next).init({
         clickToLink: "Click to Link",
         linkAccountsToAccess: "Link accounts to access services",
         linkAccounts: "Link accounts",
+        // Service Page
+        department: "Department",
+        serviceDetails: "Service Details",
+        actions: "Actions",
+        bookNow: "Book Now",
+        applyNow: "Apply Now",
+        requestTransfer: "Request Transfer",
+        serviceHelpText: "If you're facing any issues with this service, please contact our helpline at 1800-XXX-XXXX or visit the nearest CSC center.",
         // Service Categories
         electricityDept: "Electricity Department",
         waterDept: "Water Supply Board",
@@ -588,6 +596,14 @@ i18n.use(initReactI18next).init({
         clickToLink: "लिंक करने के लिए क्लिक करें",
         linkAccountsToAccess: "सेवाओं का उपयोग करने के लिए खाते लिंक करें",
         linkAccounts: "खाते लिंक करें",
+        // Service Page
+        department: "विभाग",
+        serviceDetails: "सेवा विवरण",
+        actions: "कार्रवाई",
+        bookNow: "अभी बुक करें",
+        applyNow: "अभी आवेदन करें",
+        requestTransfer: "स्थानांतरण का अनुरोध करें",
+        serviceHelpText: "यदि आपको इस सेवा के साथ कोई समस्या हो रही है, तो कृपया हमारी हेल्पलाइन 1800-XXX-XXXX पर संपर्क करें या निकटतम CSC केंद्र पर जाएं।",
         // Service Categories
         electricityDept: "बिजली विभाग",
         waterDept: "जल प्रदाय बोर्ड",
@@ -934,6 +950,14 @@ i18n.use(initReactI18next).init({
         clickToLink: "লিংক করতে ক্লিক করুন",
         linkAccountsToAccess: "সেবা ব্যবহারের জন্য অ্যাকাউন্ট লিংক করুন",
         linkAccounts: "অ্যাকাউন্ট লিংক করুন",
+        // Service Page
+        department: "বিভাগ",
+        serviceDetails: "সেবার বিবরণ",
+        actions: "কার্যক্রম",
+        bookNow: "এখনই বুক করুন",
+        applyNow: "এখনই আবেদন করুন",
+        requestTransfer: "স্থানান্তরের অনুরোধ করুন",
+        serviceHelpText: "আপনি যদি এই সেবাটি নিয়ে কোনো সমস্যার সম্মুখীন হন, তাহলে দয়া করে আমাদের হেল্পলাইন 1800-XXX-XXXX এ যোগাযোগ করুন অথবা নিকটতম CSC কেন্দ্রে যান।",
         // Service Categories
         electricityDept: "বিদ্যুৎ বিভাগ",
         waterDept: "জল সরবরাহ বোর্ড",
@@ -1280,6 +1304,14 @@ i18n.use(initReactI18next).init({
         clickToLink: "లింక్ చేయడానికి క్లిక్ చేయండి",
         linkAccountsToAccess: "సేవలను ఉపయోగించడానికి ఖాతాలను లింక్ చేయండి",
         linkAccounts: "ఖాతాలను లింక్ చేయండి",
+        // Service Page
+        department: "శాఖ",
+        serviceDetails: "సేవ వివరాలు",
+        actions: "చర్యలు",
+        bookNow: "ఇప్పుడే బుక్ చేయండి",
+        applyNow: "ఇప్పుడే దరఖాస్తు చేయండి",
+        requestTransfer: "బదిలీ కోరండి",
+        serviceHelpText: "మీరు ఈ సేవతో ఏవైనా సమస్యలను ఎదుర్కంటే, దయచేసి మా హెల్ప్‌లైన్ 1800-XXX-XXXX కు సంప్రదించండి లేదా సమీప CSC కేంద్రాన్ని సందర్శించండి.",
         // Service Categories
         electricityDept: "విద్యుత్ శాఖ",
         waterDept: "నీటి సరఫరా బోర్డు",
@@ -1626,6 +1658,14 @@ i18n.use(initReactI18next).init({
         clickToLink: "लिंक करण्यासाठी क्लिक करा",
         linkAccountsToAccess: "सेवा वापरण्यासाठी खाती लिंक करा",
         linkAccounts: "खाती लिंक करा",
+        // Service Page
+        department: "विभाग",
+        serviceDetails: "सेवा तपशील",
+        actions: "क्रिया",
+        bookNow: "आता बुक करा",
+        applyNow: "आता अर्ज करा",
+        requestTransfer: "बदलीची विनंती करा",
+        serviceHelpText: "आपल्याला या सेवेशी संबंधित कोणतीही समस्या असल्यास, कृपया आमच्या हेल्पलाइन 1800-XXX-XXXX वर संपर्क करा किंवा जवळच्या CSC केंद्राला भेट द्या.",
         // Service Categories
         electricityDept: "वीज विभाग",
         waterDept: "पाणी पुरवठा मंडळ",
@@ -1972,6 +2012,14 @@ i18n.use(initReactI18next).init({
         clickToLink: "இணைக்க கிளிக் செய்யவும்",
         linkAccountsToAccess: "சேவைகளை அணுக கணக்குகளை இணைக்கவும்",
         linkAccounts: "கணக்குகளை இணைக்கவும்",
+        // Service Page
+        department: "துறை",
+        serviceDetails: "சேவை விவரங்கள்",
+        actions: "செயல்கள்",
+        bookNow: "இப்போது பதிவு செய்",
+        applyNow: "இப்போது விண்ணப்பி",
+        requestTransfer: "மாற்றத்தை கோருங்கள்",
+        serviceHelpText: "இந்த சேவையில் ஏதேனும் சிக்கல்களை எதிர்கொண்டால், தயவுசெய்து எங்கள் ஹெல்ப்லைன் 1800-XXX-XXXX ஐ தொடர்பு கொள்ளவும் அல்லது அருகிலுள்ள CSC மையத்தை பார்வையிடவும்.",
         // Service Categories
         electricityDept: "மின்சார துறை",
         waterDept: "தண்ணீர் வழங்கல் வாரியம்",
@@ -2318,6 +2366,14 @@ i18n.use(initReactI18next).init({
         clickToLink: "લિંક કરવા ક્લિક કરો",
         linkAccountsToAccess: "સેવાઓ વાપરવા માટે ખાતાં લિંક કરો",
         linkAccounts: "ખાતાં લિંક કરો",
+        // Service Page
+        department: "વિભાગ",
+        serviceDetails: "સેવા વિગતો",
+        actions: "ક્રિયાઓ",
+        bookNow: "હવે બુક કરો",
+        applyNow: "હવે અરજી કરો",
+        requestTransfer: "બદલીની વિનંતી કરો",
+        serviceHelpText: "જો તમને આ સેવા સાથે કોઈ સમસ્યા હોય, તો કૃપા કરીને અમારી હેલ્પલાઇન 1800-XXX-XXXX પર સંપર્ક કરો અથવા નજીકના CSC કેન્દ્રની મુલાકાત લો.",
         // Service Categories
         electricityDept: "વીજળી વિભાગ",
         waterDept: "પાણી પૂરવઠા બોર્ડ",
@@ -2664,6 +2720,14 @@ i18n.use(initReactI18next).init({
         clickToLink: "ಲಿಂಕ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
         linkAccountsToAccess: "ಸೇವೆಗಳನ್ನು ಬಳಸಲು ಖಾತೆಗಳನ್ನು ಲಿಂಕ್ ಮಾಡಿ",
         linkAccounts: "ಖಾತೆಗಳನ್ನು ಲಿಂಕ್ ಮಾಡಿ",
+        // Service Page
+        department: "ಇಲಾಖೆ",
+        serviceDetails: "ಸೇವಾ ವಿವರಗಳು",
+        actions: "ಕ್ರಿಯೆಗಳು",
+        bookNow: "ಈಗ ಬುಕ್ ಮಾಡಿ",
+        applyNow: "ಈಗ ಅರ್ಜಿ ಸಲ್ಲಿಸಿ",
+        requestTransfer: "ವರ್ಗಾವಣೆಗೆ ವಿನಂತಿಸಿ",
+        serviceHelpText: "ಈ ಸೇವೆಯೊಂದಿಗೆ ಯಾವುದೇ ಸಮಸ್ಯೆಗಳನ್ನು ಎದುರಿಸುತ್ತಿದ್ದರೆ, ದಯವಿಟ್ಟು ನಮ್ಮ ಹೆಲ್ಪ್‌ಲೈನ್ 1800-XXX-XXXX ಗೆ ಸಂಪರ್ಕಿಸಿ ಅಥವಾ ಹತ್ತಿರದ CSC ಕೇಂದ್ರಕ್ಕೆ ಭೇಟಿ ನೀಡಿ.",
         // Service Categories
         electricityDept: "ವಿದ್ಯುತ್ ಇಲಾಖೆ",
         waterDept: "ನೀರು ಪೂರೈಕೆ ಮಂಡಳಿ",

@@ -41,8 +41,8 @@ export class AuthController {
 
     res.cookie("access_token", result.access_token, {
       httpOnly: true,
-      secure: false, // false for localhost development
-      sameSite: "lax", // lax works for same-site requests
+      secure: true, // required for HTTPS
+      sameSite: "none", // required for cross-site
       maxAge: 5 * 60 * 1000,
     })
 

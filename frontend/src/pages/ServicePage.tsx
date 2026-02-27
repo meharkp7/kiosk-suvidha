@@ -151,7 +151,7 @@ export default function ServicePage() {
 
   return (
     <KioskLayout
-      title={`${departmentIcons[department] || "📋"} ${department?.charAt(0).toUpperCase()}${department?.slice(1)} Services`}
+      title={`${departmentIcons[department] || "📋"} ${t(department || "")} ${t("services")}`}
       subtitle={`Account: ${accountNumber}`}
       showHeader={true}
       showNav={true}
@@ -165,10 +165,10 @@ export default function ServicePage() {
             <span className="text-5xl">{serviceIcons[service] || "📋"}</span>
             <div>
               <h1 className="text-3xl font-bold text-slate-800 capitalize">
-                {service.replace(/-/g, " ")}
+                {t(service.replace(/-([a-z])/g, (g: string[]) => g[1].toUpperCase()))}
               </h1>
               <p className="text-slate-500 text-lg">
-                {department?.charAt(0).toUpperCase()}{department?.slice(1)} Department
+                {t(department || "")} {t("department")}
               </p>
             </div>
           </div>
@@ -177,7 +177,7 @@ export default function ServicePage() {
         {/* Data Display */}
         {data && (
           <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
-            <h2 className="text-xl font-semibold text-slate-800 mb-4">Service Details</h2>
+            <h2 className="text-xl font-semibold text-slate-800 mb-4">{t("serviceDetails")}</h2>
             <div className="bg-slate-50 rounded-xl p-6 overflow-auto max-h-96">
               <pre className="text-sm text-slate-700 whitespace-pre-wrap">
                 {JSON.stringify(data, null, 2)}
@@ -188,48 +188,48 @@ export default function ServicePage() {
 
         {/* Action Section */}
         <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h2 className="text-xl font-semibold text-slate-800 mb-6">Actions</h2>
+          <h2 className="text-xl font-semibold text-slate-800 mb-6">{t("actions")}</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {service.includes("pay") && (
               <button className="flex items-center justify-center gap-3 bg-blue-600 text-white py-5 rounded-xl text-xl font-semibold hover:bg-blue-700 transition-all active:scale-[0.98] shadow-lg">
                 <span>💳</span>
-                Proceed to Payment
+                {t("proceedToPayment")}
               </button>
             )}
             
             {service.includes("complaint") && (
               <button className="flex items-center justify-center gap-3 bg-amber-600 text-white py-5 rounded-xl text-xl font-semibold hover:bg-amber-700 transition-all active:scale-[0.98] shadow-lg">
                 <span>📢</span>
-                Submit Complaint
+                {t("submitComplaint")}
               </button>
             )}
             
             {service.includes("book") && (
               <button className="flex items-center justify-center gap-3 bg-green-600 text-white py-5 rounded-xl text-xl font-semibold hover:bg-green-700 transition-all active:scale-[0.98] shadow-lg">
                 <span>✓</span>
-                Book Now
+                {t("bookNow")}
               </button>
             )}
             
             {service.includes("apply") && (
               <button className="flex items-center justify-center gap-3 bg-purple-600 text-white py-5 rounded-xl text-xl font-semibold hover:bg-purple-700 transition-all active:scale-[0.98] shadow-lg">
                 <span>📝</span>
-                Apply Now
+                {t("applyNow")}
               </button>
             )}
             
             {service.includes("transfer") && (
               <button className="flex items-center justify-center gap-3 bg-indigo-600 text-white py-5 rounded-xl text-xl font-semibold hover:bg-indigo-700 transition-all active:scale-[0.98] shadow-lg">
                 <span>🔄</span>
-                Request Transfer
+                {t("requestTransfer")}
               </button>
             )}
             
             {service.includes("download") || service.includes("receipt") && (
               <button className="flex items-center justify-center gap-3 bg-slate-700 text-white py-5 rounded-xl text-xl font-semibold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-lg">
                 <span>⬇️</span>
-                Download PDF
+                {t("downloadPDF")}
               </button>
             )}
           </div>
@@ -239,16 +239,15 @@ export default function ServicePage() {
             onClick={() => navigate("/services-dashboard")}
             className="w-full mt-4 bg-slate-100 text-slate-700 py-4 rounded-xl text-lg font-medium hover:bg-slate-200 transition-all"
           >
-            ← Back to Services
+            {t("backToServices")}
           </button>
         </div>
 
         {/* Help Card */}
         <div className="mt-6 bg-blue-50 rounded-2xl p-6">
-          <h3 className="font-semibold text-blue-900 mb-2">💡 Need Help?</h3>
+          <h3 className="font-semibold text-blue-900 mb-2">💡 {t("needHelp")}</h3>
           <p className="text-blue-700 text-sm">
-            If you're facing any issues with this service, please contact our helpline at 
-            <strong> 1800-XXX-XXXX</strong> or visit the nearest CSC center.
+            {t("serviceHelpText")}
           </p>
         </div>
       </div>
