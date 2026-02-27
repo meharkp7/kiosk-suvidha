@@ -558,6 +558,7 @@ i18n.use(initReactI18next).init({
         invalidMobile: "कृपया वैध 10 अंकों का मोबाइल नंबर दर्ज करें",
         // Page Titles
         linkedAccounts: "लिंक्ड खाते",
+        linkedAccountsCount: "आपके पास {{count}} लिंक्ड खाते हैं। ",
         selectAccounts: "सेवाओं का उपयोग करने के लिए खाते चुनें",
         availableServices: "उपलब्ध सेवाएं",
         dashboard: "डैशबोर्ड",
@@ -868,6 +869,7 @@ i18n.use(initReactI18next).init({
         invalidMobile: "অনুগ্রহ করে বৈধ 10 সংখ্যার মোবাইল নম্বর লিখুন",
         // Page Titles
         linkedAccounts: "লিংকড অ্যাকাউন্ট",
+        linkedAccountsCount: "আপনার {{count}}টি লিংকড অ্যাকাউন্ট আছে। ",
         selectAccounts: "সেবা ব্যবহারের জন্য অ্যাকাউন্ট নির্বাচন করুন",
         availableServices: "উপলব্ধ সেবা",
         dashboard: "ড্যাশবোর্ড",
@@ -1178,6 +1180,7 @@ i18n.use(initReactI18next).init({
         invalidMobile: "దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి",
         // Page Titles
         linkedAccounts: "లింక్ చేసిన ఖాతాలు",
+        linkedAccountsCount: "మీకు {{count}} లింక్ చేసిన ఖాతాలు ఉన్నాయి. ",
         selectAccounts: "సేవలను ఉపయోగించడానికి ఖాతాలను ఎంచుకోండి",
         availableServices: "అందుబాటులో ఉన్న సేవలు",
         dashboard: "డాష్‌బోర్డ్",
@@ -1488,6 +1491,7 @@ i18n.use(initReactI18next).init({
         invalidMobile: "कृपया वैध 10 अंकी मोबाइल नंबर प्रविष्ट करा",
         // Page Titles
         linkedAccounts: "लिंक्ड खाती",
+        linkedAccountsCount: "तुमच्याकडे {{count}} लिंक्ड खाती आहेत। ",
         selectAccounts: "सेवा वापरण्यासाठी खाती निवडा",
         availableServices: "उपलब्ध सेवा",
         dashboard: "डॅशबोर्ड",
@@ -1798,6 +1802,7 @@ i18n.use(initReactI18next).init({
         invalidMobile: "சரியான 10 இலக்க மொபைல் எண்ணை உள்ளிடவும்",
         // Page Titles
         linkedAccounts: "இணைக்கப்பட்ட கணக்குகள்",
+        linkedAccountsCount: "உங்களிடம் {{count}} இணைக்கப்பட்ட கணக்குகள் உள்ளன. ",
         selectAccounts: "சேவைகளை அணுக கணக்குகளை தேர்ந்தெடுக்கவும்",
         availableServices: "கிடைக்கும் சேவைகள்",
         dashboard: "டாஷ்போர்டு",
@@ -2108,6 +2113,7 @@ i18n.use(initReactI18next).init({
         invalidMobile: "મહેરબાની કરીને માન્ય 10 અંકનો મોબાઇલ નંબર દાખલ કરો",
         // Page Titles
         linkedAccounts: "લિંક્ડ ખાતાં",
+        linkedAccountsCount: "તમારી પાસે {{count}} લિંક્ડ ખાતાં છે. ",
         selectAccounts: "સેવાઓ વાપરવા માટે ખાતાં પસંદ કરો",
         availableServices: "ઉપલબ્ધ સેવાઓ",
         dashboard: "ડેશબોર્ડ",
@@ -2418,6 +2424,7 @@ i18n.use(initReactI18next).init({
         invalidMobile: "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ 10 ಅಂಕೆಯ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
         // Page Titles
         linkedAccounts: "ಲಿಂಕ್ ಮಾಡಿದ ಖಾತೆಗಳು",
+        linkedAccountsCount: "ನಿಮ್ಮಲ್ಲಿ {{count}} ಲಿಂಕ್ ಮಾಡಿದ ಖಾತೆಗಳಿವೆ. ",
         selectAccounts: "ಸೇವೆಗಳನ್ನು ಬಳಸಲು ಖಾತೆಗಳನ್ನು ಆರಿಸಿ",
         availableServices: "ಲಭ್ಯವಿರುವ ಸೇವೆಗಳು",
         dashboard: "ಡ್ಯಾಶ್ಬೋರ್ಡ್",

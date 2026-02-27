@@ -409,7 +409,7 @@ export default function ServicesDashboard() {
                         </div>
 
                         <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 mb-2 line-clamp-2">
-                          {service.label}
+                          {t(service.key.replace(/-([a-z])/g, (g) => g[1].toUpperCase())) || service.label}
                         </h3>
 
                         <p className="text-xs sm:text-sm text-gray-500 line-clamp-2">
