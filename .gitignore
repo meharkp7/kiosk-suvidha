@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+frontend/dist/
+frontend/node_modules/
+frontend/release/
